@@ -1,4 +1,22 @@
-# Getting Started with Create React App
+# Priyashree's Portfolio
+
+A dark-theme single-page design portfolio built with React.
+
+## Stack
+- React (Create React App)
+- Inline styles — no component libraries
+- Google Fonts — Cormorant Garamond, DM Sans
+
+## Run locally
+
+```bash
+npm install
+npm start
+```
+
+Opens at [http://localhost:3000](http://localhost:3000)
+
+---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

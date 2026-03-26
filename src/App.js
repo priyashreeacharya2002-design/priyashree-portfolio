@@ -14,6 +14,57 @@ const COLORS = {
   border: 'rgba(255,255,255,0.06)',
 };
 
+const THINKER_ASCII = `
+              _...._
+           .-'      '-.
+          /  ,-~~~~-.  \\
+         /  / .-~~-. \\  \\
+        |  | ( o  o ) |  |
+        |  |  \\ -- /  |  |
+        |  |  ,\`--',  |  |
+         \\ | / ,--. \\ | /
+          \\|/ / ,-, \\ \\|/
+           |  | | | |  |
+           |,-' | | '-,|
+          /|    | |    |\\
+         / |  ,-' '-.  | \\
+        /  | /       \\ |  \\
+       /  /|/   ,-.   \\|\\  \\
+      /  / /   /   \\   \\ \\  \\
+     /  / /   | ,-. |   \\ \\  \\
+    /  / /    |/   \\|    \\ \\  \\
+   /  / /     /     \\     \\ \\  \\
+  /  / /     /  ,-.  \\     \\ \\  \\
+ /  / /  ,--/ ,'   '. \\--,  \\ \\  \\
+|  / / ,' / //       \\\\ \\ '.  \\ \\ |
+|  | | |  ///    O    \\\\\\ |  |  | ||
+|  | | | ///           \\\\| |  |  | ||
+|  \\ \\ \\///             \\/ /  /  / /|
+|   \\ \\ \\/     ,--,     / / /  / / |
+\\    \\ \\ \\    /    \\   / / /  / /  /
+ \\    \\ \\ \\  /      \\ / / /  / /  /
+  \\    \\ \\ \\/   ,--, V / /  / /  /
+   \\    \\ \\ \\  /    \\/ / /  / /  /
+    \\    \\ '-\\/      / / '--' /  /
+     \\    \\   \\     / /      /  /
+      \\    \\   '---' /      /  /
+       \\    \\       /    ,-'  /
+        \\    '-----'   ,'    /
+         \\            /     /
+          \\          / ,---'
+           \\        / /
+            \\      / /
+             \\    / /
+              \\  / /
+    ,-----------\\/ /----------,
+   /             \\/            \\
+  /  . ' . ' . '  ' . ' . ' .  \\
+ /                               \\
+/   . ' . ' . ' . ' . ' . ' . '  \\
+\\________________________________/
+  \\                            /
+   \\........................../ `;
+
 const ROTATING_WORDS = [
   'DESIGNER',
   'RESEARCHER',
@@ -187,28 +238,26 @@ function Nav() {
   };
 
   const logoStyle = {
-    fontFamily: "'Cormorant Garamond', serif",
-    fontWeight: 300,
-    fontSize: '18px',
-    color: COLORS.textPrimary,
-    letterSpacing: '0.02em',
+    fontFamily: "'Blackletter', cursive",
+    fontSize: '31px',
+    color: '#f8f6f2',
     cursor: 'pointer',
     textDecoration: 'none',
+    lineHeight: 1,
   };
 
   const navLinks = [
-    { label: 'ABOUT', bracket: true, href: '#about' },
-    { label: 'WORK', bracket: true, href: '#work' },
-    { label: 'PLAY', bracket: true, href: '#sandbox' },
-    { label: 'WORK WITH ME', bracket: false, href: '#contact' },
+    { label: 'WORK', href: '#work' },
+    { label: 'PLAY', href: '#sandbox' },
+    { label: 'ABOUT', href: '#about' },
   ];
 
   return (
     <nav style={navStyle}>
-      <a href="#hero" style={logoStyle} onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-        Nivedha.
+      <a href="#" style={logoStyle} onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+        P
       </a>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '48px' }}>
         {navLinks.map((link, i) => (
           <NavLink
             key={link.label}
@@ -224,69 +273,176 @@ function Nav() {
 }
 
 function NavLink({ link, isHovered, onHover, onLeave }) {
-  const isWorkWithMe = !link.bracket;
-  const baseStyle = {
-    fontFamily: "'DM Sans', sans-serif",
-    fontWeight: 400,
-    fontSize: '11px',
-    letterSpacing: '0.12em',
-    textDecoration: 'none',
-    cursor: 'pointer',
-    position: 'relative',
-    overflow: 'hidden',
-    display: 'inline-block',
-  };
-
-  if (isWorkWithMe) {
-    return (
-      <a
-        href={link.href}
-        style={{
-          ...baseStyle,
-          color: COLORS.accent,
-          padding: '6px 14px',
-          border: `1px solid ${COLORS.accent}`,
-          letterSpacing: '0.1em',
-          transition: 'background 0.3s ease, color 0.3s ease',
-          background: isHovered ? COLORS.accent : 'transparent',
-          ...(isHovered ? { color: COLORS.bg } : {}),
-        }}
-        onMouseEnter={onHover}
-        onMouseLeave={onLeave}
-        onClick={e => { e.preventDefault(); document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' }); }}
-      >
-        {link.label}
-      </a>
-    );
-  }
-
   return (
     <a
       href={link.href}
       style={{
-        ...baseStyle,
-        color: isHovered ? COLORS.textPrimary : COLORS.textSecondary,
+        fontFamily: "'DM Sans', sans-serif",
+        fontWeight: 400,
+        fontSize: '15px',
+        letterSpacing: '0.14em',
+        textDecoration: 'none',
+        color: isHovered ? COLORS.textPrimary : '#B0ADA6',
         transition: 'color 0.3s ease',
-        height: '20px',
+        cursor: 'pointer',
       }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       onClick={e => { e.preventDefault(); document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' }); }}
     >
-      <span style={{
-        display: 'flex',
-        flexDirection: 'column',
-        transform: isHovered ? 'translateY(-50%)' : 'translateY(0)',
-        transition: 'transform 0.3s ease',
-      }}>
-        <span>[ {link.label} ]</span>
-        <span>[ {link.label} ]</span>
-      </span>
+      {link.label}
     </a>
   );
 }
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
+
+const HAND_RAMP = [' ',' ',' ','.','.','.',',',',','`',"'",'`',',',':',';','+','i','!','t','f','l','J','C','Y','X','Z','O','0','w','M','W','B','#','$','@'];
+
+function indicesToText(cur, cols, rows) {
+  const lines = [];
+  for (let r = 0; r < rows; r++) {
+    let line = '';
+    for (let c = 0; c < cols; c++) line += HAND_RAMP[cur[r * cols + c]];
+    lines.push(line);
+  }
+  return lines.join('\n');
+}
+
+function CreationOfAdamBg() {
+  const [leftDisplay, setLeftDisplay] = useState('');
+  const [rightDisplay, setRightDisplay] = useState('');
+  const lRef = useRef(null); // { base, cur, cols, rows }
+  const rRef = useRef(null);
+
+  useEffect(() => {
+    const charW = 5.5, charH = 10.35;
+    const targetH = window.innerHeight * 0.677;
+
+    function loadHand(src) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          const natW = img.naturalWidth, natH = img.naturalHeight;
+          const rows = Math.floor(targetH / charH);
+          const cols = Math.floor(rows * (natW / natH) * (charH / charW));
+          const off = document.createElement('canvas');
+          off.width = natW * 2; off.height = natH * 2;
+          const ctx = off.getContext('2d');
+          ctx.drawImage(img, 0, 0, off.width, off.height);
+          const data = ctx.getImageData(0, 0, off.width, off.height).data;
+          const iw = off.width, ih = off.height;
+          const sx = iw / cols, sy = ih / rows;
+          const base = new Uint8Array(cols * rows);
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+              let rS=0,gS=0,bS=0,n=0;
+              for (let dy=0;dy<3;dy++) for (let dx=0;dx<3;dx++) {
+                const px=Math.min(Math.floor(col*sx)+dx,iw-1);
+                const py=Math.min(Math.floor(row*sy)+dy,ih-1);
+                const i=(py*iw+px)*4;
+                rS+=data[i];gS+=data[i+1];bS+=data[i+2];n++;
+              }
+              const lum=rS/n*0.299+gS/n*0.587+bS/n*0.114;
+              if (lum>242) { base[row*cols+col]=0; }
+              else {
+                const d=(242-lum)/242;
+                const t=d<0.5?2*d*d:1-Math.pow(-2*d+2,2)/2;
+                base[row*cols+col]=Math.max(1,Math.min(HAND_RAMP.length-1,Math.floor(Math.pow(t,0.55)*(HAND_RAMP.length-1))));
+              }
+            }
+          }
+          resolve({ base, cur: new Uint8Array(base), cols, rows });
+        };
+        img.src = src;
+      });
+    }
+
+    let interval;
+    Promise.all([loadHand('/leftside.png'), loadHand('/rightside.png')])
+      .then(([left, right]) => {
+        lRef.current = left;
+        rRef.current = right;
+        setLeftDisplay(indicesToText(left.cur, left.cols, left.rows));
+        setRightDisplay(indicesToText(right.cur, right.cols, right.rows));
+
+        // Character morphing: each tick, ~2% of visible chars step ±1 in the ramp,
+        // with a pull back toward their original value so they shimmer in place.
+        interval = setInterval(() => {
+          [lRef, rRef].forEach((ref, side) => {
+            const d = ref.current;
+            if (!d) return;
+            const { base, cur, cols, rows } = d;
+            const total = cols * rows;
+            const changes = Math.floor(total * 0.02);
+            for (let i = 0; i < changes; i++) {
+              const pos = Math.floor(Math.random() * total);
+              if (base[pos] === 0) continue; // skip background
+              const diff = cur[pos] - base[pos];
+              // Weight toward returning to base; allow ±3 drift max
+              const r = Math.random();
+              if (Math.abs(diff) >= 3) {
+                // Force step back toward base
+                cur[pos] += diff > 0 ? -1 : 1;
+              } else if (r < 0.45) {
+                // Pull toward base
+                if (diff !== 0) cur[pos] += diff > 0 ? -1 : 1;
+              } else if (r < 0.70) {
+                // Drift away from base
+                const step = Math.random() < 0.5 ? 1 : -1;
+                const next = cur[pos] + step;
+                if (next >= 1 && next < HAND_RAMP.length) cur[pos] = next;
+              }
+              // else ~30%: stay unchanged
+            }
+            const text = indicesToText(cur, cols, rows);
+            if (side === 0) setLeftDisplay(text);
+            else setRightDisplay(text);
+          });
+        }, 110);
+      });
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const base = {
+    position: 'absolute',
+    top: '50%',
+    margin: 0, padding: 0,
+    fontFamily: 'monospace',
+    fontSize: '9px',
+    lineHeight: '1.15',
+    color: 'rgba(255,255,255,0.32)',
+    overflow: 'hidden',
+    whiteSpace: 'pre',
+    pointerEvents: 'none',
+    userSelect: 'none',
+    zIndex: 0,
+  };
+
+  return (
+    <>
+      <style>{`
+        @keyframes reachRight {
+          0%,100% { transform: translateY(-50%) translateX(0px);   opacity: 0.85; }
+          50%      { transform: translateY(-50%) translateX(48px);  opacity: 1;    }
+        }
+        @keyframes reachLeft {
+          0%,100% { transform: translateY(-50%) translateX(0px);   opacity: 0.85; }
+          50%      { transform: translateY(-50%) translateX(-48px); opacity: 1;    }
+        }
+      `}</style>
+      <pre className="adam-ascii-bg" style={{
+        ...base, left: '-48px',
+        animation: 'reachRight 10s ease-in-out infinite',
+      }}>{leftDisplay}</pre>
+      <pre className="adam-ascii-bg" style={{
+        ...base, right: '-48px',
+        animation: 'reachLeft 10s ease-in-out infinite',
+      }}>{rightDisplay}</pre>
+    </>
+  );
+}
 
 function Hero() {
   const [wordIndex, setWordIndex] = useState(0);
@@ -323,45 +479,11 @@ function Hero() {
         background: 'radial-gradient(ellipse at 60% 20%, rgba(201,185,154,0.04) 0%, transparent 60%)',
       }} />
 
-      {/* Coordinates */}
-      <div style={{
-        position: 'absolute',
-        top: '88px',
-        right: '40px',
-        fontFamily: "'DM Sans', sans-serif",
-        fontWeight: 300,
-        fontSize: '10px',
-        letterSpacing: '0.15em',
-        color: COLORS.textMuted,
-        lineHeight: 1.8,
-        textAlign: 'right',
-      }}>
-        <div>13.0827° N</div>
-        <div>80.2707° E</div>
-        <div style={{ marginTop: '6px', color: COLORS.textVeryMuted }}>CHENNAI, IN</div>
-      </div>
+      {/* Creation of Adam — dot bg */}
+      <CreationOfAdamBg />
 
-      {/* Status indicator */}
-      <div style={{
-        position: 'absolute',
-        top: '88px',
-        left: '40px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: '10px',
-        letterSpacing: '0.12em',
-        color: COLORS.textMuted,
-      }}>
-        <span style={{
-          width: '6px', height: '6px', borderRadius: '50%',
-          background: '#4CAF50',
-          boxShadow: '0 0 8px rgba(76,175,80,0.6)',
-          animation: 'pulse 2s ease-in-out infinite',
-        }} />
-        AVAILABLE FOR PROJECTS
-      </div>
+      {/* Coordinates */}
+
 
       {/* Main hero text */}
       <div style={{ position: 'relative', zIndex: 1 }}>
@@ -372,14 +494,14 @@ function Hero() {
           marginBottom: '40px',
         }}>
           <div style={{
-            fontSize: 'clamp(72px, 12vw, 160px)',
+            fontSize: 'clamp(36px, 6vw, 80px)',
             color: COLORS.textPrimary,
             letterSpacing: '-0.02em',
           }}>
             Multi—
           </div>
           <div style={{
-            fontSize: 'clamp(72px, 12vw, 160px)',
+            fontSize: 'clamp(36px, 6vw, 80px)',
             color: COLORS.textPrimary,
             letterSpacing: '-0.02em',
             display: 'flex',
@@ -390,7 +512,7 @@ function Hero() {
             <span>disciplinary</span>
           </div>
           <div style={{
-            fontSize: 'clamp(72px, 12vw, 160px)',
+            fontSize: 'clamp(36px, 6vw, 80px)',
             color: COLORS.accent,
             fontStyle: 'italic',
             letterSpacing: '-0.02em',
@@ -412,13 +534,23 @@ function Hero() {
               alignItems: 'center',
               gap: '0.6em',
             }}>
-              <span style={{ color: COLORS.textVeryMuted }}>—</span>
               <span style={{
-                color: COLORS.accent,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '6px 24px 8px',
+                borderRadius: '100px',
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                boxShadow: '0 0 24px rgba(201,185,154,0.12), inset 0 1px 0 rgba(255,255,255,0.08)',
                 opacity: wordVisible ? 1 : 0,
-                transform: wordVisible ? 'translateY(0)' : 'translateY(8px)',
-                transition: 'opacity 0.3s ease, transform 0.3s ease',
-                display: 'inline-block',
+                transform: wordVisible ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.97)',
+                transition: 'opacity 0.35s ease, transform 0.35s ease',
+                fontStyle: 'italic',
+                color: COLORS.textPrimary,
+                minWidth: '280px',
               }}>
                 {ROTATING_WORDS[wordIndex]}
               </span>
@@ -458,6 +590,7 @@ function Hero() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
         }
+        @media (max-width: 768px) { .adam-ascii-bg { display: none !important; } }
       `}</style>
     </section>
   );
@@ -492,17 +625,27 @@ function CTAButton({ href, children, filled = false }) {
       style={{
         fontFamily: "'DM Sans', sans-serif",
         fontWeight: 400,
-        fontSize: '11px',
-        letterSpacing: '0.15em',
-        color: hovered ? (filled ? COLORS.bg : COLORS.bg) : (filled ? COLORS.bg : COLORS.textPrimary),
-        background: hovered ? COLORS.accent : (filled ? COLORS.accent : 'transparent'),
-        border: `1px solid ${COLORS.accent}`,
-        padding: '12px 28px',
+        fontSize: '12px',
+        letterSpacing: '0.08em',
+        color: hovered ? COLORS.bg : COLORS.textPrimary,
+        background: hovered
+          ? COLORS.accent
+          : filled
+          ? 'rgba(201,185,154,0.15)'
+          : 'rgba(255,255,255,0.07)',
+        border: '1px solid rgba(255,255,255,0.15)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        padding: '14px 32px',
+        borderRadius: '100px',
         textDecoration: 'none',
         display: 'inline-block',
         transition: 'all 0.3s ease',
         whiteSpace: 'nowrap',
         cursor: 'pointer',
+        boxShadow: hovered
+          ? '0 0 20px rgba(201,185,154,0.25)'
+          : '0 0 0px transparent',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -727,7 +870,7 @@ function DigestsSection() {
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px', marginBottom: '80px' }}>
           <div style={fadeUp(visible, 0)}>
-            <SectionLabel>DIGESTS</SectionLabel>
+            <SectionLabel>ANNOTATIONS</SectionLabel>
             <h2 style={{
               fontFamily: "'Cormorant Garamond', serif",
               fontWeight: 300,
@@ -738,7 +881,7 @@ function DigestsSection() {
               maxWidth: '520px',
               letterSpacing: '-0.01em',
             }}>
-              Thinking out loud about design, culture & making things
+              Thoughts on behaviour, design and everything I'm still figuring out.
             </h2>
           </div>
           <div style={{ ...fadeUp(visible, 0.15), alignSelf: 'flex-end' }}>
@@ -751,7 +894,7 @@ function DigestsSection() {
               margin: '0 0 24px',
               maxWidth: '300px',
             }}>
-              Notes from the studio — occasional writing on craft, process and the ideas that won't leave me alone.
+              Field notes across research — self-reflections on projects that finished and ones that didn't.
             </p>
           </div>
         </div>
@@ -1239,15 +1382,15 @@ function ContactSection() {
             marginBottom: '6px',
             letterSpacing: '0.02em',
           }}>
-            Nivedha Nirmal
-          </div>
+            Priyashree Acharya
+</div>
           <div style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: '10px',
             color: COLORS.textVeryMuted,
             letterSpacing: '0.1em',
           }}>
-            © 2025 — All rights reserved
+            © 2026 — All rights reserved
           </div>
         </div>
 
@@ -1291,9 +1434,137 @@ function FooterLink({ label }) {
   );
 }
 
+// ─── SPLASH SCREEN ───────────────────────────────────────────────────────────
+
+const SPLASH_LABELS = [
+  'Observing…',
+  'Questioning…',
+  'Synthesising…',
+  'Reframing…',
+  'Designing…',
+  'Done.',
+];
+
+function SplashScreen({ onDone }) {
+  const [progress, setProgress] = useState(0);
+  const [barTransition, setBarTransition] = useState('none');
+  const [labelIndex, setLabelIndex] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    const timers = [];
+
+    // "Loading wonder…" shows immediately (labelIndex starts at 0)
+
+    // Stage 1 — Crawl: 0% → 50% over 2800ms ease-out
+    timers.push(setTimeout(() => {
+      setBarTransition('width 2800ms ease-out');
+      setProgress(50);
+    }, 50));
+
+    // Label 1 — "Questioning…"
+    timers.push(setTimeout(() => setLabelIndex(1), 1120));
+
+    // Label 2 — "Synthesising…"
+    timers.push(setTimeout(() => setLabelIndex(2), 2240));
+
+    // Stage 2 — Pick up: 50% → 80% over 1200ms ease-in-out
+    timers.push(setTimeout(() => {
+      setBarTransition('width 1200ms ease-in-out');
+      setProgress(80);
+    }, 2860));
+
+    // Label 3 — "Reframing…" midway through stage 2
+    timers.push(setTimeout(() => setLabelIndex(3), 3460));
+
+    // Stage 3 — Pause: hold at 80% for 900ms
+    timers.push(setTimeout(() => {
+      setBarTransition('none');
+      setLabelIndex(4); // "Designing…"
+    }, 4060));
+
+    // Stage 4 — Sprint: 80% → 100% over 600ms ease-in
+    timers.push(setTimeout(() => {
+      setBarTransition('width 600ms ease-in');
+      setProgress(100);
+    }, 4960));
+
+    // Label 5 — "Done." when sprint fires
+    timers.push(setTimeout(() => setLabelIndex(5), 4960));
+
+    // Fade out 300ms after hitting 100%
+    timers.push(setTimeout(() => {
+      setFading(true);
+      setTimeout(onDone, 600);
+    }, 5860));
+
+    return () => timers.forEach(clearTimeout);
+  }, [onDone]);
+
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      background: '#000',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000,
+      opacity: fading ? 0 : 1,
+      transition: 'opacity 0.6s ease',
+      pointerEvents: fading ? 'none' : 'all',
+    }}>
+      {/* Progress bar */}
+      <div style={{
+        width: '560px',
+        height: '2px',
+        background: 'rgba(255,255,255,0.15)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          height: '100%',
+          width: `${progress}%`,
+          background: '#fff',
+          transition: barTransition,
+        }} />
+      </div>
+
+      {/* Label */}
+      <div style={{
+        fontFamily: "'DM Sans', sans-serif",
+        fontSize: '22px',
+        letterSpacing: '0.1em',
+        color: '#fff',
+        textTransform: 'uppercase',
+        marginTop: '32px',
+      }}>
+        {SPLASH_LABELS[labelIndex]}
+      </div>
+    </div>
+  );
+}
+
 // ─── APP ROOT ─────────────────────────────────────────────────────────────────
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(
+    () => !sessionStorage.getItem('splashSeen')
+  );
+  const [splashDone, setSplashDone] = useState(
+    () => !!sessionStorage.getItem('splashSeen')
+  );
+
+  const handleSplashDone = useCallback(() => {
+    sessionStorage.setItem('splashSeen', 'true');
+    setShowSplash(false);
+    setSplashDone(true);
+  }, []);
+
   useEffect(() => {
     // Inject Google Fonts
     const existing = document.querySelector('link[data-portfolio-fonts]');
@@ -1301,14 +1572,27 @@ export default function App() {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.setAttribute('data-portfolio-fonts', 'true');
-      link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap';
+      link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Serif+Display&display=swap';
       document.head.appendChild(link);
     }
 
-    // Smooth scroll behavior
-    document.documentElement.style.scrollBehavior = 'smooth';
+    // Inject local Blackletter font
+    const existingFont = document.querySelector('style[data-blackletter]');
+    if (!existingFont) {
+      const style = document.createElement('style');
+      style.setAttribute('data-blackletter', 'true');
+      style.textContent = `
+        @font-face {
+          font-family: 'Blackletter';
+          src: url('/BLACEB__.TTF') format('truetype');
+          font-weight: normal;
+          font-style: normal;
+        }
+      `;
+      document.head.appendChild(style);
+    }
 
-    // Base styles
+    document.documentElement.style.scrollBehavior = 'smooth';
     document.body.style.margin = '0';
     document.body.style.padding = '0';
     document.body.style.background = COLORS.bg;
@@ -1320,14 +1604,21 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ background: COLORS.bg, minHeight: '100vh' }}>
-      <Nav />
-      <Hero />
-      <WorkSection />
-      <DigestsSection />
-      <CabinetSection />
-      <SandboxSection />
-      <ContactSection />
-    </div>
+    <>
+      {showSplash && <SplashScreen onDone={handleSplashDone} />}
+      <div style={{
+        background: COLORS.bg,
+        minHeight: '100vh',
+        visibility: splashDone ? 'visible' : 'hidden',
+      }}>
+        <Nav />
+        <Hero />
+        <WorkSection />
+        <DigestsSection />
+        <CabinetSection />
+        <SandboxSection />
+        <ContactSection />
+      </div>
+    </>
   );
 }

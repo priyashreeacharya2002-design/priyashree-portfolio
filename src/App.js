@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import * as THREE from 'three';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
@@ -444,6 +445,380 @@ function CreationOfAdamBg() {
   );
 }
 
+function PrismBg() {
+  const canvasRef = useRef(null);
+  const threeRef  = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    // ── Three.js pyramid ───────────────────────────────────────────────────
+    const threeCanvas = threeRef.current;
+    const renderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
+    renderer.setSize(320, 320);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 0.1, 4);
+
+    const geo  = new THREE.ConeGeometry(1, 1.6, 4, 1);
+    geo.rotateY(Math.PI / 4);
+    const mat  = new THREE.MeshPhysicalMaterial({
+      color:        0xffffff,
+      transmission: 0.95,
+      roughness:    0,
+      metalness:    0,
+      ior:          2.4,
+      thickness:    2,
+      transparent:  true,
+      opacity:      0.15,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    scene.add(mesh);
+
+    const edgesGeo = new THREE.EdgesGeometry(geo);
+    const edgesMat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.7, transparent: true });
+    const edges    = new THREE.LineSegments(edgesGeo, edgesMat);
+    scene.add(edges);
+
+    // All 4 face normals + centroids in mesh-local space (after geo.rotateY(π/4)):
+    //   base vertices: (±√2/2, -0.8, ±√2/2)  apex: (0, 0.8, 0)
+    //   centroid x or z = √2/3 ≈ 0.4714,  centroid y = -0.8/3
+    const R3 = Math.SQRT2 / 3;   // ≈ 0.4714
+    const CY = -0.8 / 3;
+    const FACES = [
+      { normal: new THREE.Vector3( 1, 0,  0), centroid: new THREE.Vector3( R3, CY,   0) }, // +X right
+      { normal: new THREE.Vector3( 0, 0,  1), centroid: new THREE.Vector3(  0, CY,  R3) }, // +Z back
+      { normal: new THREE.Vector3(-1, 0,  0), centroid: new THREE.Vector3(-R3, CY,   0) }, // -X left
+      { normal: new THREE.Vector3( 0, 0, -1), centroid: new THREE.Vector3(  0, CY, -R3) }, // -Z front
+    ];
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+    dirLight.position.set(-3, 1, 2);
+    scene.add(dirLight);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+
+    // ── 2. SpotLight — specular hot-spot top-left ───────────────────────
+    const spotLight = new THREE.SpotLight(0xffffff, 3);
+    spotLight.position.set(-3, 4, 3);
+    spotLight.angle    = 0.3;
+    spotLight.penumbra = 0.8;
+    scene.add(spotLight);
+
+    // ── 3. PointLight inside prism — internal glow ─────────────────────
+    const innerLight = new THREE.PointLight(0xaaddff, 0.4);
+    innerLight.position.set(0, 0, 0);
+    scene.add(innerLight);
+
+    // ── 4. Fresnel rim — slightly larger cone, back-face, white glow ───
+    const fresnelGeo = new THREE.ConeGeometry(1.02, 1.632, 4, 1);
+    fresnelGeo.rotateY(Math.PI / 4);
+    const fresnelMat = new THREE.MeshBasicMaterial({
+      color:       0xffffff,
+      side:        THREE.BackSide,
+      transparent: true,
+      opacity:     0.08,
+    });
+    const fresnelMesh = new THREE.Mesh(fresnelGeo, fresnelMat);
+    scene.add(fresnelMesh);
+
+    // ── 5. Base reflection plane ────────────────────────────────────────
+    const basePlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.4, 2.4),
+      new THREE.MeshStandardMaterial({
+        color:       0xffffff,
+        metalness:   0.9,
+        roughness:   0.1,
+        transparent: true,
+        opacity:     0.15,
+      })
+    );
+    basePlane.rotation.x = -Math.PI / 2;
+    basePlane.position.y = -0.82;   // just below pyramid base
+    scene.add(basePlane);
+
+    let W = canvas.offsetWidth;
+    let H = canvas.offsetHeight;
+    canvas.width = W; canvas.height = H;
+
+    let mx = W * 0.35, my = H * 0.42;
+    let rayAlpha = 0;
+    let animFrame;
+
+    const onMove = e => {
+      const r = canvas.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+    };
+    window.addEventListener('mousemove', onMove);
+
+    function seg(ax,ay,bx,by,cx,cy,dx,dy) {
+      const d = (dy-cy)*(bx-ax)-(dx-cx)*(by-ay);
+      if (Math.abs(d)<1e-8) return null;
+      const t = ((dx-cx)*(ay-cy)-(dy-cy)*(ax-cx))/d;
+      const u = ((bx-ax)*(ay-cy)-(by-ay)*(ax-cx))/d;
+      if (t>=0&&t<=1&&u>=0&&u<=1) return {x:ax+t*(bx-ax),y:ay+t*(by-ay),t,u};
+      return null;
+    }
+
+    function volumetricBeam(ox,oy,tx,ty) {
+      if (!isFinite(ox)||!isFinite(oy)||!isFinite(tx)||!isFinite(ty)) return;
+      const dx=tx-ox, dy=ty-oy;
+      const angle=Math.atan2(dy,dx);
+      const N=80;
+
+      ctx.save();
+      ctx.globalCompositeOperation='screen';
+
+      // origin light source — wide elliptical glow behind everything
+      ctx.save();
+      ctx.translate(ox,oy); ctx.rotate(angle); ctx.scale(1, 200/300);
+      const srcGrd=ctx.createRadialGradient(0,0,0, 0,0,300);
+      srcGrd.addColorStop(0,'rgba(255,255,255,0.12)');
+      srcGrd.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.beginPath(); ctx.arc(0,0,300,0,Math.PI*2);
+      ctx.fillStyle=srcGrd; ctx.fill();
+      ctx.restore();
+
+      // [half-length along beam, half-width perp to beam, alpha]
+      const passes=[
+        [110, 45,  0.012], // 220×90
+        [ 50, 20,  0.025], // 100×40
+        [ 14,  5,  0.09 ], // 28×10
+      ];
+
+      passes.forEach(([rl, rp, alpha]) => {
+        for (let i=0; i<N; i++) {
+          const t=i/(N-1);
+          const bx=ox+dx*t, by=oy+dy*t;
+
+          let s=1;
+          if (i<20)    s=1+(19-i)*0.5/19;
+          if (i>=N-20) s=1-((i-(N-20))/19)*0.6;
+          s=Math.max(0.15,s);
+
+          const erl=rl*s, erp=rp*s;
+
+          ctx.save();
+          ctx.translate(bx, by);
+          ctx.rotate(angle);
+          ctx.scale(1, erp/erl);
+          const grd=ctx.createRadialGradient(0,0,0, 0,0,erl);
+          grd.addColorStop(0, `rgba(255,255,255,${alpha})`);
+          grd.addColorStop(1, 'rgba(255,255,255,0)');
+          ctx.beginPath();
+          ctx.arc(0, 0, erl, 0, Math.PI*2);
+          ctx.fillStyle=grd;
+          ctx.fill();
+          ctx.restore();
+        }
+      });
+
+      ctx.restore();
+    }
+
+    function drawSparkle(sx,sy) {
+      // 4-pointed star only — no halo circle
+      const long=10, short=1.5;
+      ctx.save();
+      ctx.shadowBlur=50; ctx.shadowColor='white'; ctx.fillStyle='#ffffff';
+      ctx.beginPath();
+      for (let i=0;i<8;i++) {
+        const a=i*Math.PI/4 - Math.PI/2;
+        const r=i%2===0 ? long : short;
+        const x=sx+Math.cos(a)*r, y=sy+Math.sin(a)*r;
+        i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      }
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    // Angles offset from centre (deg), colours [r,g,b]
+    // 15° total fan
+    const RAYS = [
+      [  7,   255,  30,   0],  // red
+      [  4.5, 255, 120,   0],  // orange
+      [  2,   230, 255,   0],  // yellow
+      [  0,     0, 255,  60],  // green
+      [ -2,     0,  80, 255],  // blue
+      [ -4.5,  60,   0, 200],  // indigo
+      [ -7,   140,   0, 255],  // violet
+    ];
+
+    function spectrumRay(ex, ey, angleDeg, r, g, b) {
+      if (!isFinite(ex)||!isFinite(ey)) return;
+      const a  = angleDeg * Math.PI / 180;
+      const ca = Math.cos(a), sa = Math.sin(a);
+      const px = -sa, py = ca;
+      const reach = W - ex + 300;
+      const fx = ex + ca*reach, fy = ey + sa*reach;
+      const nearHW = 3, farHW = 28;
+
+      // [opacity-at-origin, opacity-at-edge, shadowBlur]
+      const passes = [
+        [0.04,  0.01, 150],  // outer feather
+        [0.10,  0.02,  80],  // mid feather
+        [0.35,  0.07,  25],  // body
+        [0.40,  0.10,  25],  // bright core
+      ];
+
+      passes.forEach(([a0, a1, sBl]) => {
+        const grd = ctx.createLinearGradient(ex, ey, fx, fy);
+        grd.addColorStop(0, `rgba(${r},${g},${b},${a0})`);
+        grd.addColorStop(1, `rgba(${r},${g},${b},${a1})`);
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.shadowBlur  = sBl;
+        ctx.shadowColor = `rgb(${r},${g},${b})`;
+        ctx.beginPath();
+        ctx.moveTo(ex + px*nearHW, ey + py*nearHW);
+        ctx.lineTo(ex - px*nearHW, ey - py*nearHW);
+        ctx.lineTo(fx - px*farHW,  fy - py*farHW);
+        ctx.lineTo(fx + px*farHW,  fy + py*farHW);
+        ctx.closePath();
+        ctx.fillStyle = grd;
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function tick() {
+      animFrame = requestAnimationFrame(tick);
+      ctx.clearRect(0,0,W,H);
+
+      const pcx = W/2 + 60, pcy = H/2;
+      const PW = 120, PH = 100;
+      const top = [pcx,        pcy - PH/2];
+      const bl  = [pcx - PW/2, pcy + PH/2];
+      const br  = [pcx + PW/2, pcy + PH/2];
+
+      // Beam: from left edge at 35% height toward cursor
+      const originY = H * 0.35;
+      const dirX = mx || 1;
+      const dirY = my - originY;
+      const mag  = Math.sqrt(dirX*dirX+dirY*dirY)||1;
+      const far  = W*4;
+      const bx2  = (dirX/mag)*far;
+      const by2  = originY+(dirY/mag)*far;
+
+      const hitL = seg(0,originY,bx2,by2, top[0],top[1],bl[0],bl[1]);
+      const hitR = seg(0,originY,bx2,by2, top[0],top[1],br[0],br[1]);
+      const hitB = seg(0,originY,bx2,by2, bl[0],bl[1],br[0],br[1]);
+
+      const hits = [hitL,hitR,hitB].filter(Boolean).sort((a,b)=>a.t-b.t);
+      const entry = hits[0]||null, exit = hits[1]||null;
+      const isHit = hits.length >= 2;
+
+      if (isHit) rayAlpha = Math.min(1, rayAlpha+0.055);
+      else        rayAlpha = Math.max(0, rayAlpha-0.038);
+
+      // ── Dynamic face selection: find which face points most left/right ──
+      mesh.updateMatrixWorld();
+      const mw = mesh.matrixWorld;
+      let maxLeft = -Infinity, maxRight = -Infinity;
+      let entryFace = FACES[2], exitFace = FACES[0]; // fallback
+      FACES.forEach(f => {
+        const wn = f.normal.clone().transformDirection(mw);
+        const dotL = -wn.x; // dot with (-1,0,0)
+        const dotR =  wn.x; // dot with (+1,0,0)
+        if (dotL > maxLeft)  { maxLeft  = dotL; entryFace = f; }
+        if (dotR > maxRight) { maxRight = dotR; exitFace  = f; }
+      });
+
+      // Project the active face centroids to main-canvas pixel coords
+      const _ec = entryFace.centroid.clone().applyMatrix4(mw);
+      _ec.project(camera);
+      const entryPx = { x: W/2 + 60 + _ec.x * 160, y: H/2 - _ec.y * 160 };
+
+      const _xc = exitFace.centroid.clone().applyMatrix4(mw);
+      _xc.project(camera);
+      const exitPx  = { x: W/2 + 60 + _xc.x * 160, y: H/2 - _xc.y * 160 };
+
+      // Beam terminates on projected left face surface when hitting
+      const beamEndX = isHit ? entryPx.x : Math.min(mx, top[0]-10);
+      const beamEndY = isHit ? entryPx.y : my;
+      volumetricBeam(0, originY, beamEndX, beamEndY);
+
+      // ── Three.js pyramid (slow Y rotation each frame) ──────────────────
+      mesh.rotation.y        += 0.004;
+      edges.rotation.y       += 0.004;
+      fresnelMesh.rotation.y += 0.004;
+      renderer.render(scene, camera);
+
+      // Spectrum rays from projected right face surface
+      if (rayAlpha > 0) {
+        const ex = exitPx.x, ey = exitPx.y;
+        ctx.globalAlpha = rayAlpha;
+        RAYS.forEach(([deg,r,g,b]) => spectrumRay(ex, ey, deg, r, g, b));
+
+        // unifying blend pass — single trapezoid with smooth HSL rainbow
+        if (isFinite(ex) && isFinite(ey)) {
+          const topA = -7 * Math.PI/180, botA = 7 * Math.PI/180;
+          const reach = W - ex + 300;
+          const fxT = ex + Math.cos(topA)*reach, fyT = ey + Math.sin(topA)*reach;
+          const fxB = ex + Math.cos(botA)*reach, fyB = ey + Math.sin(botA)*reach;
+          const hslGrd = ctx.createLinearGradient(fxT, fyT, fxB, fyB);
+          // violet→red top-to-bottom through full spectrum
+          hslGrd.addColorStop(0,    'hsla(270,100%,55%,0.15)');
+          hslGrd.addColorStop(0.17, 'hsla(240,100%,55%,0.15)');
+          hslGrd.addColorStop(0.33, 'hsla(210,100%,55%,0.15)');
+          hslGrd.addColorStop(0.5,  'hsla(120,100%,50%,0.15)');
+          hslGrd.addColorStop(0.67, 'hsla(60,100%,50%,0.15)');
+          hslGrd.addColorStop(0.83, 'hsla(30,100%,50%,0.15)');
+          hslGrd.addColorStop(1,    'hsla(0,100%,50%,0.15)');
+          ctx.save();
+          ctx.globalCompositeOperation = 'screen';
+          ctx.shadowBlur = 60; ctx.shadowColor = 'white';
+          ctx.beginPath();
+          ctx.moveTo(ex, ey - 3); ctx.lineTo(ex, ey + 3);
+          ctx.lineTo(fxB, fyB);   ctx.lineTo(fxT, fyT);
+          ctx.closePath();
+          ctx.fillStyle = hslGrd; ctx.fill();
+          ctx.restore();
+        }
+
+        ctx.globalAlpha = 1;
+        // exit sparkle
+        ctx.save();
+        ctx.beginPath(); ctx.arc(ex,ey,3.5,0,Math.PI*2);
+        ctx.fillStyle='rgba(255,255,255,0.95)';
+        ctx.shadowBlur=16; ctx.shadowColor='white'; ctx.fill();
+        ctx.restore();
+      }
+
+      if (isHit) drawSparkle(entryPx.x, entryPx.y);
+    }
+
+    animFrame = requestAnimationFrame(tick);
+    const onResize = () => {
+      W=canvas.offsetWidth; H=canvas.offsetHeight;
+      canvas.width=W; canvas.height=H;
+    };
+    window.addEventListener('resize', onResize);
+    return () => {
+      cancelAnimationFrame(animFrame);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('resize', onResize);
+      renderer.dispose();
+    };
+  }, []);
+
+  return (
+    <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:0,
+      display: window.innerWidth < 768 ? 'none' : 'block'}}>
+      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',filter:'blur(1.5px)'}}/>
+      <canvas ref={threeRef} width={320} height={320} style={{
+        position:'absolute',
+        left:'calc(50% + 60px)', top:'50%',
+        transform:'translate(-50%,-50%)',
+        pointerEvents:'none',
+      }}/>
+    </div>
+  );
+}
+
 function Hero() {
   const [wordIndex, setWordIndex] = useState(0);
   const [wordVisible, setWordVisible] = useState(true);
@@ -473,14 +848,27 @@ function Hero() {
         overflow: 'hidden',
       }}
     >
+      {/* Background image — anchored to bottom, behind everything */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        height: '65%',
+        pointerEvents: 'none', zIndex: 0,
+        backgroundImage: 'url(/bg.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        opacity: 0.6,
+        maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.85) 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.85) 100%)',
+      }} />
+
       {/* Subtle grain overlay */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
         background: 'radial-gradient(ellipse at 60% 20%, rgba(201,185,154,0.04) 0%, transparent 60%)',
       }} />
 
-      {/* Creation of Adam — dot bg */}
-      <CreationOfAdamBg />
+      {/* Three.js prism + 2D beam overlay */}
+      <PrismBg />
 
       {/* Coordinates */}
 

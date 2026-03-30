@@ -208,6 +208,15 @@ function LogoLink({ logoStyle }) {
 function Nav() {
   const scrolled = useScrolled();
   const [hoveredLink, setHoveredLink] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const navStyle = {
     position: 'fixed',
@@ -247,22 +256,72 @@ function Nav() {
   return (
     <nav style={navStyle}>
       <LogoLink logoStyle={logoStyle} />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '48px' }}>
-        {navLinks.map((link, i) => (
-          <NavLink
-            key={link.label}
-            link={link}
-            isHovered={hoveredLink === i}
-            onHover={() => setHoveredLink(i)}
-            onLeave={() => setHoveredLink(null)}
-          />
-        ))}
-      </div>
+
+      {/* Desktop nav links */}
+      {!isMobile && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '48px' }}>
+          {navLinks.map((link, i) => (
+            <NavLink
+              key={link.label}
+              link={link}
+              isHovered={hoveredLink === i}
+              onHover={() => setHoveredLink(i)}
+              onLeave={() => setHoveredLink(null)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Mobile hamburger */}
+      {isMobile && (
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#B0ADA6',
+            fontSize: '20px',
+            cursor: 'pointer',
+            padding: '8px',
+            lineHeight: 1,
+          }}
+        >
+          {menuOpen ? '✕' : '☰'}
+        </button>
+      )}
+
+      {/* Mobile menu overlay */}
+      {isMobile && menuOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(13,12,10,0.97)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          zIndex: 99,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '48px',
+        }}>
+          {navLinks.map((link, i) => (
+            <NavLink
+              key={link.label}
+              link={link}
+              isHovered={hoveredLink === i}
+              onHover={() => setHoveredLink(i)}
+              onLeave={() => setHoveredLink(null)}
+              onClick={() => setMenuOpen(false)}
+            />
+          ))}
+        </div>
+      )}
     </nav>
   );
 }
 
-function NavLink({ link, isHovered, onHover, onLeave }) {
+function NavLink({ link, isHovered, onHover, onLeave, onClick }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isPageLink = !link.href.startsWith('#');
@@ -285,12 +344,12 @@ function NavLink({ link, isHovered, onHover, onLeave }) {
       onMouseLeave={onLeave}
       onClick={e => {
         e.preventDefault();
+        if (onClick) onClick();
         if (isPageLink) {
           navigate(link.href);
         } else if (isOnHome) {
           document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' });
         } else {
-          // Navigate to home then scroll to the section
           navigate('/');
           setTimeout(() => {
             document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' });
@@ -1281,8 +1340,7 @@ function ProjectCard({ project, delay, visible }) {
           color: COLORS.textMuted,
           margin: 0,
           lineHeight: 1.7,
-          opacity: hovered ? 1 : 0,
-          transform: hovered ? 'translateY(0)' : 'translateY(6px)',
+          opacity: 1,
           transition: 'opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s',
         }}>
           {project.description}
@@ -1516,11 +1574,12 @@ function SkillCircle({ label }) {
       <span style={{
         fontFamily: "'Apple Garamond', Georgia, serif",
         fontWeight: 300,
-        fontSize: '14px',
+        fontSize: '15px',
         color: '#ffffff',
         textAlign: 'center',
         lineHeight: 1.5,
         whiteSpace: 'pre-line',
+        padding: '0 12px',
         position: 'relative',
         zIndex: 1,
         transition: 'text-shadow 0.3s ease',
@@ -2116,7 +2175,7 @@ function ContactSection() {
           </h2>
         </div>
 
-        {/* Right — button + email */}
+        {/* Right — button + email + linkedin */}
         <div style={{ ...fadeUp(visible, 0.2), display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
           <CTAButton href="mailto:Priyashree@nid.edu">GET TALKING</CTAButton>
           <a
@@ -2134,6 +2193,24 @@ function ContactSection() {
             onMouseLeave={() => setEmailHovered(false)}
           >
             Priyashree@nid.edu
+          </a>
+          <a
+            href="https://www.linkedin.com/in/priyashree02/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              fontWeight: 300,
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.4)',
+              letterSpacing: '0.05em',
+              textDecoration: 'none',
+              transition: 'color 0.3s ease',
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
+          >
+            LinkedIn ↗
           </a>
         </div>
       </div>

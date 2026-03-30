@@ -1,0 +1,106 @@
+
+<style>
+  .hero {
+    min-height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    padding: 3rem 2rem;
+  }
+  .sentence {
+    font-family: Georgia, serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 400;
+    color: rgba(255,255,255,0.92);
+    text-align: center;
+    line-height: 1.35;
+    max-width: 780px;
+  }
+  .word-wrap {
+    display: inline-block;
+    position: relative;
+    vertical-align: bottom;
+  }
+  .word-slot {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    height: 1.35em;
+    vertical-align: bottom;
+    min-width: 10px;
+    transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+  .word-inner {
+    display: inline-block;
+    white-space: nowrap;
+    font-style: italic;
+    background: linear-gradient(90deg, #5dcaa5, #a78bfa, #7dd3fc, #f0abfc, #5dcaa5);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+    will-change: transform, opacity;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+  .word-inner.enter {
+    animation: wordIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards, shimmer 4s linear infinite;
+  }
+  .word-inner.exit {
+    animation: wordOut 0.35s cubic-bezier(0.4,0,1,1) forwards;
+  }
+  @keyframes wordIn {
+    from { opacity: 0; transform: translateY(60%) skewY(4deg); }
+    to   { opacity: 1; transform: translateY(0) skewY(0deg); }
+  }
+  @keyframes wordOut {
+    from { opacity: 1; transform: translateY(0) skewY(0deg); }
+    to   { opacity: 0; transform: translateY(-50%) skewY(-3deg); }
+  }
+  .static { color: rgba(255,255,255,0.88); }
+</style>
+
+<div class="hero">
+  <div class="sentence">
+    <span class="static">It starts with a spark,<br>and becomes </span><span class="word-slot" id="slot"><span class="word-inner" id="word">ideas</span></span>
+  </div>
+</div>
+
+<script>
+  const words = ['ideas', 'questions', 'systems', 'experiences', 'design'];
+  let current = 0;
+  const slot = document.getElementById('slot');
+  const wordEl = document.getElementById('word');
+
+  function measureWord(text) {
+    const ghost = document.createElement('span');
+    ghost.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-family:Georgia,serif;font-style:italic;font-size:' + getComputedStyle(slot.parentElement).fontSize;
+    ghost.textContent = text;
+    document.body.appendChild(ghost);
+    const w = ghost.offsetWidth;
+    ghost.remove();
+    return w;
+  }
+
+  slot.style.width = measureWord(words[0]) + 'px';
+
+  function rotate() {
+    const next = (current + 1) % words.length;
+
+    wordEl.className = 'word-inner exit';
+
+    setTimeout(() => {
+      const nextWidth = measureWord(words[next]);
+      slot.style.width = nextWidth + 'px';
+      wordEl.textContent = words[next];
+      wordEl.className = 'word-inner enter';
+      current = next;
+    }, 320);
+  }
+
+  setInterval(rotate, 2600);
+</script>

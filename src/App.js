@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import * as THREE from 'three';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -9,10 +10,10 @@ const COLORS = {
   surface: '#141412',
   textPrimary: '#EDEAE3',
   textSecondary: '#6B6860',
-  textMuted: '#3a3830',
-  textVeryMuted: '#2e2d2a',
-  accent: '#C9B99A',
-  border: 'rgba(255,255,255,0.06)',
+  textMuted: '#58564f',
+  textVeryMuted: '#444240',
+  accent: '#D81060',
+  border: 'rgba(255,255,255,0.08)',
 };
 
 const THINKER_ASCII = `
@@ -67,105 +68,78 @@ const THINKER_ASCII = `
    \\........................../ `;
 
 const ROTATING_WORDS = [
-  'DESIGNER',
-  'RESEARCHER',
-  'STORYTELLER',
-  'THINKER',
-  'MAKER',
-  'CURATOR',
+  'ideas',
+  'questions',
+  'systems',
+  'experiences',
+  'design',
 ];
 
 const PROJECTS = [
   {
-    id: 'ark',
-    name: 'ARK',
-    category: 'A',
-    categoryLabel: 'Brand Identity',
-    type: 'Branding & Visual System',
-    description: 'A sanctuary brand for modern wellness — where ancient wisdom meets minimal form.',
-    color: '#1a1915',
-    accent: '#8B7355',
-  },
-  {
-    id: 'groov',
-    name: 'GROOV',
-    category: 'B',
+    id: 'bunav',
+    name: 'BUNAV',
     categoryLabel: 'Product Design',
     type: 'App Design & UX',
-    description: 'A music discovery app built around the social ritual of sharing sound.',
+    description: 'A parenting app designed to support families through the journey of raising children with intention.',
+    color: '#1a1915',
+    accent: '#8B7355',
+    image: '/bunav.png',
+    url: 'https://priyashreeacharya.myportfolio.com/bunav-parenting-app',
+  },
+  {
+    id: 'carbon-count',
+    name: 'CARBON COUNT',
+    categoryLabel: 'Interaction Design',
+    type: 'UX & Service Design',
+    description: 'A retail technology concept that makes carbon footprint visible at the point of purchase.',
     color: '#131210',
     accent: '#6B5B4E',
+    image: '/carbon-counts.png',
+    url: 'https://priyashreeacharya.myportfolio.com/carbon-count-retail-technology',
   },
   {
-    id: 'skippr',
-    name: 'SKIPPR',
-    category: 'A',
-    categoryLabel: 'Brand Identity',
-    type: 'Branding & Motion',
-    description: 'Fast travel, slow stories. A brand for the new generation of spontaneous explorers.',
+    id: 'paradyes',
+    name: 'PARADYES',
+    categoryLabel: 'UX Case Study',
+    type: 'Branding & Visual System',
+    description: 'The project is about design thinking, from research to actionable product and brand strategy.',
     color: '#111009',
     accent: '#7A6B5A',
+    image: '/paradyes.png',
+    url: 'https://priyashreeacharya.myportfolio.com/something-1',
   },
   {
-    id: 'labyrinth',
-    name: 'LABYRINTH',
-    category: 'C',
-    categoryLabel: 'Experience Design',
-    type: 'Spatial & Installation',
-    description: 'An immersive cultural exhibition exploring the architecture of memory.',
+    id: 'ember',
+    name: 'EMBER',
+    categoryLabel: 'Brand Identity & UX',
+    type: 'App Design & UX',
+    description: 'A mental health app built around warmth and continuity — a gentle space for daily emotional check-ins.',
     color: '#141310',
     accent: '#5C5248',
-  },
-  {
-    id: 'ojas',
-    name: 'OJAS',
-    category: 'B',
-    categoryLabel: 'Web Design',
-    type: 'Digital & Editorial',
-    description: 'Ayurvedic wellness reimagined — a digital-first brand for conscious living.',
-    color: '#120F0C',
-    accent: '#9E8B76',
-  },
-  {
-    id: 'tattva',
-    name: 'TATTVA',
-    category: 'C',
-    categoryLabel: 'Motion Design',
-    type: 'Film & Identity',
-    description: 'A short film identity exploring the five elements through contemporary Indian aesthetics.',
-    color: '#0F0E0C',
-    accent: '#8A7B69',
+    image: '/ember.png',
+    url: 'https://priyashreeacharya.myportfolio.com/ember-mental-health-app',
   },
 ];
 
 const DIGESTS = [
   {
     id: 1,
-    title: 'On designing with restraint',
-    subtitle: 'Why the best design decisions are often subtractions — and how to train yourself to see what can be removed.',
-    tag: 'Process',
+    title: 'Barriers to Identity: Aadhaar Case Study',
+    subtitle: 'An investigation into how India\'s national ID system creates exclusion — and what design could do differently.',
+    tag: 'Research',
     readTime: '6 min read',
+    image: '/aadhaar.png',
+    url: 'https://medium.com/@priyashreeacharya2002/barriers-to-identity-aadhaar-case-study-04af72112890',
   },
   {
     id: 2,
-    title: 'The typography of trust',
-    subtitle: 'How letterforms communicate credibility, and what your font choices are saying about your brand before a word is read.',
-    tag: 'Typography',
-    readTime: '8 min read',
-  },
-  {
-    id: 3,
-    title: 'Designing for feeling, not function',
-    subtitle: 'A case for emotional design: when products stop solving problems and start creating moments.',
-    tag: 'Thinking',
+    title: 'Melt the Weight of Expectations: Visual Design',
+    subtitle: 'A visual exploration of academic pressure and the quiet weight students carry.',
+    tag: 'Visual Design',
     readTime: '5 min read',
-  },
-  {
-    id: 4,
-    title: 'The Indian design renaissance',
-    subtitle: 'On the quiet resurgence of vernacular aesthetics in contemporary Indian brand design.',
-    tag: 'Culture',
-    readTime: '10 min read',
+    image: '/melt.png',
+    url: 'https://medium.com/@priyashreeacharya2002/melt-the-weight-of-expectations-visual-design-6464dff5f085',
   },
 ];
 
@@ -214,6 +188,23 @@ function fadeUp(visible, delay = 0) {
 
 // ─── NAV ─────────────────────────────────────────────────────────────────────
 
+function LogoLink({ logoStyle }) {
+  const navigate = useNavigate();
+  return (
+    <a
+      href="/"
+      style={logoStyle}
+      onClick={e => {
+        e.preventDefault();
+        navigate('/');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }}
+    >
+      P
+    </a>
+  );
+}
+
 function Nav() {
   const scrolled = useScrolled();
   const [hoveredLink, setHoveredLink] = useState(null);
@@ -241,7 +232,7 @@ function Nav() {
   const logoStyle = {
     fontFamily: "'Blackletter', cursive",
     fontSize: '31px',
-    color: '#f8f6f2',
+    color: '#D81060',
     cursor: 'pointer',
     textDecoration: 'none',
     lineHeight: 1,
@@ -249,15 +240,13 @@ function Nav() {
 
   const navLinks = [
     { label: 'WORK', href: '#work' },
-    { label: 'PLAY', href: '#sandbox' },
-    { label: 'ABOUT', href: '#about' },
+    { label: 'BLOG', href: '#sandbox' },
+    { label: 'ABOUT', href: '/about' },
   ];
 
   return (
     <nav style={navStyle}>
-      <a href="#" style={logoStyle} onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-        P
-      </a>
+      <LogoLink logoStyle={logoStyle} />
       <div style={{ display: 'flex', alignItems: 'center', gap: '48px' }}>
         {navLinks.map((link, i) => (
           <NavLink
@@ -274,22 +263,40 @@ function Nav() {
 }
 
 function NavLink({ link, isHovered, onHover, onLeave }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isPageLink = !link.href.startsWith('#');
+  const isOnHome = location.pathname === '/';
+
   return (
     <a
       href={link.href}
       style={{
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
         fontWeight: 400,
-        fontSize: '15px',
-        letterSpacing: '0.14em',
+        fontSize: '11px',
+        letterSpacing: '0.08em',
         textDecoration: 'none',
-        color: isHovered ? COLORS.textPrimary : '#B0ADA6',
+        color: isHovered ? '#D81060' : '#B0ADA6',
         transition: 'color 0.3s ease',
         cursor: 'pointer',
       }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      onClick={e => { e.preventDefault(); document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' }); }}
+      onClick={e => {
+        e.preventDefault();
+        if (isPageLink) {
+          navigate(link.href);
+        } else if (isOnHome) {
+          document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          // Navigate to home then scroll to the section
+          navigate('/');
+          setTimeout(() => {
+            document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' });
+          }, 300);
+        }
+      }}
     >
       {link.label}
     </a>
@@ -466,53 +473,84 @@ function PrismBg() {
     const geo  = new THREE.ConeGeometry(1, 1.6, 4, 1);
     geo.rotateY(Math.PI / 4);
     const mat  = new THREE.MeshPhysicalMaterial({
-      color:        0xffffff,
-      transmission: 0.95,
-      roughness:    0,
-      metalness:    0,
-      ior:          2.4,
-      thickness:    2,
-      transparent:  true,
-      opacity:      0.15,
+      color:              0xffffff,
+      transmission:       0.92,
+      roughness:          0,
+      metalness:          0,
+      ior:                2.4,
+      thickness:          2,
+      transparent:        true,
+      opacity:            0.18,
+      clearcoat:          1.0,
+      clearcoatRoughness: 0.0,
+      reflectivity:       1.0,
     });
     const mesh = new THREE.Mesh(geo, mat);
     scene.add(mesh);
 
+    // Core edges — bright
     const edgesGeo = new THREE.EdgesGeometry(geo);
-    const edgesMat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.7, transparent: true });
+    const edgesMat = new THREE.LineBasicMaterial({ color: 0xddeeff, opacity: 0.92, transparent: true });
     const edges    = new THREE.LineSegments(edgesGeo, edgesMat);
     scene.add(edges);
 
-    // All 4 face normals + centroids in mesh-local space (after geo.rotateY(π/4)):
-    //   base vertices: (±√2/2, -0.8, ±√2/2)  apex: (0, 0.8, 0)
-    //   centroid x or z = √2/3 ≈ 0.4714,  centroid y = -0.8/3
-    const R3 = Math.SQRT2 / 3;   // ≈ 0.4714
+    // Glow edge layer 1 — close halo, cyan tint
+    const glowGeo1 = new THREE.EdgesGeometry(new THREE.ConeGeometry(1.014, 1.622, 4, 1));
+    glowGeo1.rotateY(Math.PI / 4);
+    const glowMat1 = new THREE.LineBasicMaterial({ color: 0x88ccff, opacity: 0.18, transparent: true });
+    const glowEdges1 = new THREE.LineSegments(glowGeo1, glowMat1);
+    scene.add(glowEdges1);
+
+    // Glow edge layer 2 — wide soft bloom, blue-violet
+    const glowGeo2 = new THREE.EdgesGeometry(new THREE.ConeGeometry(1.035, 1.656, 4, 1));
+    glowGeo2.rotateY(Math.PI / 4);
+    const glowMat2 = new THREE.LineBasicMaterial({ color: 0x6677ff, opacity: 0.07, transparent: true });
+    const glowEdges2 = new THREE.LineSegments(glowGeo2, glowMat2);
+    scene.add(glowEdges2);
+
+    const R3 = Math.SQRT2 / 3;
     const CY = -0.8 / 3;
     const FACES = [
-      { normal: new THREE.Vector3( 1, 0,  0), centroid: new THREE.Vector3( R3, CY,   0) }, // +X right
-      { normal: new THREE.Vector3( 0, 0,  1), centroid: new THREE.Vector3(  0, CY,  R3) }, // +Z back
-      { normal: new THREE.Vector3(-1, 0,  0), centroid: new THREE.Vector3(-R3, CY,   0) }, // -X left
-      { normal: new THREE.Vector3( 0, 0, -1), centroid: new THREE.Vector3(  0, CY, -R3) }, // -Z front
+      { normal: new THREE.Vector3( 1, 0,  0), centroid: new THREE.Vector3( R3, CY,   0) },
+      { normal: new THREE.Vector3( 0, 0,  1), centroid: new THREE.Vector3(  0, CY,  R3) },
+      { normal: new THREE.Vector3(-1, 0,  0), centroid: new THREE.Vector3(-R3, CY,   0) },
+      { normal: new THREE.Vector3( 0, 0, -1), centroid: new THREE.Vector3(  0, CY, -R3) },
     ];
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+    // Key light — strong specular on left face
+    const dirLight = new THREE.DirectionalLight(0xffffff, 3.5);
     dirLight.position.set(-3, 1, 2);
     scene.add(dirLight);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.2));
 
-    // ── 2. SpotLight — specular hot-spot top-left ───────────────────────
-    const spotLight = new THREE.SpotLight(0xffffff, 3);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+
+    // Spot — top highlight
+    const spotLight = new THREE.SpotLight(0xffffff, 4);
     spotLight.position.set(-3, 4, 3);
     spotLight.angle    = 0.3;
     spotLight.penumbra = 0.8;
     scene.add(spotLight);
 
-    // ── 3. PointLight inside prism — internal glow ─────────────────────
-    const innerLight = new THREE.PointLight(0xaaddff, 0.4);
+    // Inner glow
+    const innerLight = new THREE.PointLight(0xaaddff, 0.6);
     innerLight.position.set(0, 0, 0);
     scene.add(innerLight);
 
-    // ── 4. Fresnel rim — slightly larger cone, back-face, white glow ───
+    // Specular fill — creates reflection hotspot on front-right face
+    const specLight1 = new THREE.PointLight(0xffffff, 5, 6);
+    specLight1.position.set(-1.2, 1.8, 1.6);
+    scene.add(specLight1);
+
+    // Cool rim light — blue-white reflection on back edge
+    const specLight2 = new THREE.PointLight(0xaabbff, 3, 5);
+    specLight2.position.set(1.8, 0.6, 1.2);
+    scene.add(specLight2);
+
+    // Warm under-bounce — subtle warm reflection from below
+    const specLight3 = new THREE.PointLight(0xffeedd, 1.5, 4);
+    specLight3.position.set(0, -1.5, 1.5);
+    scene.add(specLight3);
+
     const fresnelGeo = new THREE.ConeGeometry(1.02, 1.632, 4, 1);
     fresnelGeo.rotateY(Math.PI / 4);
     const fresnelMat = new THREE.MeshBasicMaterial({
@@ -523,21 +561,6 @@ function PrismBg() {
     });
     const fresnelMesh = new THREE.Mesh(fresnelGeo, fresnelMat);
     scene.add(fresnelMesh);
-
-    // ── 5. Base reflection plane ────────────────────────────────────────
-    const basePlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.4, 2.4),
-      new THREE.MeshStandardMaterial({
-        color:       0xffffff,
-        metalness:   0.9,
-        roughness:   0.1,
-        transparent: true,
-        opacity:     0.15,
-      })
-    );
-    basePlane.rotation.x = -Math.PI / 2;
-    basePlane.position.y = -0.82;   // just below pyramid base
-    scene.add(basePlane);
 
     let W = canvas.offsetWidth;
     let H = canvas.offsetHeight;
@@ -568,11 +591,8 @@ function PrismBg() {
       const dx=tx-ox, dy=ty-oy;
       const angle=Math.atan2(dy,dx);
       const N=80;
-
       ctx.save();
       ctx.globalCompositeOperation='screen';
-
-      // origin light source — wide elliptical glow behind everything
       ctx.save();
       ctx.translate(ox,oy); ctx.rotate(angle); ctx.scale(1, 200/300);
       const srcGrd=ctx.createRadialGradient(0,0,0, 0,0,300);
@@ -581,26 +601,20 @@ function PrismBg() {
       ctx.beginPath(); ctx.arc(0,0,300,0,Math.PI*2);
       ctx.fillStyle=srcGrd; ctx.fill();
       ctx.restore();
-
-      // [half-length along beam, half-width perp to beam, alpha]
       const passes=[
-        [110, 45,  0.012], // 220×90
-        [ 50, 20,  0.025], // 100×40
-        [ 14,  5,  0.09 ], // 28×10
+        [110, 45,  0.012],
+        [ 50, 20,  0.025],
+        [ 14,  5,  0.09 ],
       ];
-
       passes.forEach(([rl, rp, alpha]) => {
         for (let i=0; i<N; i++) {
           const t=i/(N-1);
           const bx=ox+dx*t, by=oy+dy*t;
-
           let s=1;
           if (i<20)    s=1+(19-i)*0.5/19;
           if (i>=N-20) s=1-((i-(N-20))/19)*0.6;
           s=Math.max(0.15,s);
-
           const erl=rl*s, erp=rp*s;
-
           ctx.save();
           ctx.translate(bx, by);
           ctx.rotate(angle);
@@ -615,12 +629,10 @@ function PrismBg() {
           ctx.restore();
         }
       });
-
       ctx.restore();
     }
 
     function drawSparkle(sx,sy) {
-      // 4-pointed star only — no halo circle
       const long=10, short=1.5;
       ctx.save();
       ctx.shadowBlur=50; ctx.shadowColor='white'; ctx.fillStyle='#ffffff';
@@ -635,16 +647,14 @@ function PrismBg() {
       ctx.restore();
     }
 
-    // Angles offset from centre (deg), colours [r,g,b]
-    // 15° total fan
     const RAYS = [
-      [  7,   255,  30,   0],  // red
-      [  4.5, 255, 120,   0],  // orange
-      [  2,   230, 255,   0],  // yellow
-      [  0,     0, 255,  60],  // green
-      [ -2,     0,  80, 255],  // blue
-      [ -4.5,  60,   0, 200],  // indigo
-      [ -7,   140,   0, 255],  // violet
+      [  7,   255,  30,   0],
+      [  4.5, 255, 120,   0],
+      [  2,   230, 255,   0],
+      [  0,     0, 255,  60],
+      [ -2,     0,  80, 255],
+      [ -4.5,  60,   0, 200],
+      [ -7,   140,   0, 255],
     ];
 
     function spectrumRay(ex, ey, angleDeg, r, g, b) {
@@ -654,16 +664,13 @@ function PrismBg() {
       const px = -sa, py = ca;
       const reach = W - ex + 300;
       const fx = ex + ca*reach, fy = ey + sa*reach;
-      const nearHW = 3, farHW = 28;
-
-      // [opacity-at-origin, opacity-at-edge, shadowBlur]
+      const nearHW = 4, farHW = 48;
       const passes = [
-        [0.04,  0.01, 150],  // outer feather
-        [0.10,  0.02,  80],  // mid feather
-        [0.35,  0.07,  25],  // body
-        [0.40,  0.10,  25],  // bright core
+        [0.04,  0.01, 180],
+        [0.10,  0.02, 100],
+        [0.35,  0.07,  60],
+        [0.40,  0.10,  60],
       ];
-
       passes.forEach(([a0, a1, sBl]) => {
         const grd = ctx.createLinearGradient(ex, ey, fx, fy);
         grd.addColorStop(0, `rgba(${r},${g},${b},${a0})`);
@@ -688,24 +695,23 @@ function PrismBg() {
       animFrame = requestAnimationFrame(tick);
       ctx.clearRect(0,0,W,H);
 
-      const pcx = W/2 + 60, pcy = H/2;
+      const pcx = W * 0.63, pcy = H * 0.30;
       const PW = 120, PH = 100;
       const top = [pcx,        pcy - PH/2];
       const bl  = [pcx - PW/2, pcy + PH/2];
       const br  = [pcx + PW/2, pcy + PH/2];
 
-      // Beam: from left edge at 35% height toward cursor
-      const originY = H * 0.35;
-      const dirX = mx || 1;
+      const originX = 50, originY = 90;
+      const dirX = mx - originX || 1;
       const dirY = my - originY;
       const mag  = Math.sqrt(dirX*dirX+dirY*dirY)||1;
       const far  = W*4;
-      const bx2  = (dirX/mag)*far;
+      const bx2  = originX+(dirX/mag)*far;
       const by2  = originY+(dirY/mag)*far;
 
-      const hitL = seg(0,originY,bx2,by2, top[0],top[1],bl[0],bl[1]);
-      const hitR = seg(0,originY,bx2,by2, top[0],top[1],br[0],br[1]);
-      const hitB = seg(0,originY,bx2,by2, bl[0],bl[1],br[0],br[1]);
+      const hitL = seg(originX,originY,bx2,by2, top[0],top[1],bl[0],bl[1]);
+      const hitR = seg(originX,originY,bx2,by2, top[0],top[1],br[0],br[1]);
+      const hitB = seg(originX,originY,bx2,by2, bl[0],bl[1],br[0],br[1]);
 
       const hits = [hitL,hitR,hitB].filter(Boolean).sort((a,b)=>a.t-b.t);
       const entry = hits[0]||null, exit = hits[1]||null;
@@ -714,53 +720,48 @@ function PrismBg() {
       if (isHit) rayAlpha = Math.min(1, rayAlpha+0.055);
       else        rayAlpha = Math.max(0, rayAlpha-0.038);
 
-      // ── Dynamic face selection: find which face points most left/right ──
       mesh.updateMatrixWorld();
       const mw = mesh.matrixWorld;
       let maxLeft = -Infinity, maxRight = -Infinity;
-      let entryFace = FACES[2], exitFace = FACES[0]; // fallback
+      let entryFace = FACES[2], exitFace = FACES[0];
       FACES.forEach(f => {
         const wn = f.normal.clone().transformDirection(mw);
-        const dotL = -wn.x; // dot with (-1,0,0)
-        const dotR =  wn.x; // dot with (+1,0,0)
+        const dotL = -wn.x;
+        const dotR =  wn.x;
         if (dotL > maxLeft)  { maxLeft  = dotL; entryFace = f; }
         if (dotR > maxRight) { maxRight = dotR; exitFace  = f; }
       });
 
-      // Project the active face centroids to main-canvas pixel coords
       const _ec = entryFace.centroid.clone().applyMatrix4(mw);
       _ec.project(camera);
-      const entryPx = { x: W/2 + 60 + _ec.x * 160, y: H/2 - _ec.y * 160 };
+      const entryPx = { x: W * 0.63 + _ec.x * 160, y: H * 0.30 - _ec.y * 160 };
 
       const _xc = exitFace.centroid.clone().applyMatrix4(mw);
       _xc.project(camera);
-      const exitPx  = { x: W/2 + 60 + _xc.x * 160, y: H/2 - _xc.y * 160 };
+      const exitPx  = { x: W * 0.63 + _xc.x * 160, y: H * 0.30 - _xc.y * 160 };
 
-      // Beam terminates on projected left face surface when hitting
       const beamEndX = isHit ? entryPx.x : Math.min(mx, top[0]-10);
       const beamEndY = isHit ? entryPx.y : my;
-      volumetricBeam(0, originY, beamEndX, beamEndY);
+      volumetricBeam(originX, originY, beamEndX, beamEndY);
 
-      // ── Three.js pyramid (slow Y rotation each frame) ──────────────────
       mesh.rotation.y        += 0.004;
       edges.rotation.y       += 0.004;
+      glowEdges1.rotation.y  += 0.004;
+      glowEdges2.rotation.y  += 0.004;
       fresnelMesh.rotation.y += 0.004;
       renderer.render(scene, camera);
 
-      // Spectrum rays from projected right face surface
       if (rayAlpha > 0) {
         const ex = exitPx.x, ey = exitPx.y;
         ctx.globalAlpha = rayAlpha;
         RAYS.forEach(([deg,r,g,b]) => spectrumRay(ex, ey, deg, r, g, b));
 
-        // unifying blend pass — single trapezoid with smooth HSL rainbow
         if (isFinite(ex) && isFinite(ey)) {
           const topA = -7 * Math.PI/180, botA = 7 * Math.PI/180;
           const reach = W - ex + 300;
           const fxT = ex + Math.cos(topA)*reach, fyT = ey + Math.sin(topA)*reach;
           const fxB = ex + Math.cos(botA)*reach, fyB = ey + Math.sin(botA)*reach;
           const hslGrd = ctx.createLinearGradient(fxT, fyT, fxB, fyB);
-          // violet→red top-to-bottom through full spectrum
           hslGrd.addColorStop(0,    'hsla(270,100%,55%,0.15)');
           hslGrd.addColorStop(0.17, 'hsla(240,100%,55%,0.15)');
           hslGrd.addColorStop(0.33, 'hsla(210,100%,55%,0.15)');
@@ -780,7 +781,6 @@ function PrismBg() {
         }
 
         ctx.globalAlpha = 1;
-        // exit sparkle
         ctx.save();
         ctx.beginPath(); ctx.arc(ex,ey,3.5,0,Math.PI*2);
         ctx.fillStyle='rgba(255,255,255,0.95)';
@@ -808,10 +808,10 @@ function PrismBg() {
   return (
     <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:0,
       display: window.innerWidth < 768 ? 'none' : 'block'}}>
-      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',filter:'blur(1.5px)'}}/>
+      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',filter:'blur(4px)'}}/>
       <canvas ref={threeRef} width={320} height={320} style={{
         position:'absolute',
-        left:'calc(50% + 60px)', top:'50%',
+        left:'63%', top:'30%',
         transform:'translate(-50%,-50%)',
         pointerEvents:'none',
       }}/>
@@ -820,23 +820,70 @@ function PrismBg() {
 }
 
 function Hero() {
-  const [wordIndex, setWordIndex] = useState(0);
-  const [wordVisible, setWordVisible] = useState(true);
+  const [prismHovered, setPrismHovered] = useState(false);
+  const heroRef = useRef(null);
+  const slotRef = useRef(null);
+  const wordInnerRef = useRef(null);
+  const currentIdxRef = useRef(0);
+
+  function measureWord(text) {
+    const ghost = document.createElement('span');
+    const fs = slotRef.current
+      ? getComputedStyle(slotRef.current.parentElement).fontSize
+      : '52px';
+    ghost.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font-family:'Apple Garamond',Georgia,serif;font-style:italic;font-size:${fs};font-weight:300;letter-spacing:-0.01em`;
+    ghost.textContent = text;
+    document.body.appendChild(ghost);
+    const w = ghost.offsetWidth;
+    ghost.remove();
+    return w;
+  }
 
   useEffect(() => {
+    if (slotRef.current) {
+      slotRef.current.style.width = measureWord(ROTATING_WORDS[0]) + 'px';
+    }
     const interval = setInterval(() => {
-      setWordVisible(false);
+      const next = (currentIdxRef.current + 1) % ROTATING_WORDS.length;
+      if (wordInnerRef.current) wordInnerRef.current.className = 'word-slot-inner exit';
       setTimeout(() => {
-        setWordIndex(i => (i + 1) % ROTATING_WORDS.length);
-        setWordVisible(true);
-      }, 300);
-    }, 2200);
+        if (slotRef.current) slotRef.current.style.width = measureWord(ROTATING_WORDS[next]) + 'px';
+        if (wordInnerRef.current) {
+          wordInnerRef.current.textContent = ROTATING_WORDS[next];
+          wordInnerRef.current.className = 'word-slot-inner enter';
+        }
+        currentIdxRef.current = next;
+      }, 320);
+    }, 2600);
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Proximity-based hover: check if mouse is within ~180px of prism centre
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+    const onMove = (e) => {
+      const rect = hero.getBoundingClientRect();
+      const prismCx = rect.left + rect.width  * 0.63;
+      const prismCy = rect.top  + rect.height * 0.30;
+      const dx = e.clientX - prismCx;
+      const dy = e.clientY - prismCy;
+      setPrismHovered(Math.sqrt(dx * dx + dy * dy) < 180);
+    };
+    const onLeave = () => setPrismHovered(false);
+    hero.addEventListener('mousemove', onMove);
+    hero.addEventListener('mouseleave', onLeave);
+    return () => {
+      hero.removeEventListener('mousemove', onMove);
+      hero.removeEventListener('mouseleave', onLeave);
+    };
   }, []);
 
   return (
     <section
       id="hero"
+      ref={heroRef}
       style={{
         minHeight: '100vh',
         background: COLORS.bg,
@@ -848,18 +895,27 @@ function Hero() {
         overflow: 'hidden',
       }}
     >
-      {/* Background image — anchored to bottom, behind everything */}
+      {/* Background image — full cover, grayscale by default, colour on prism hover */}
       <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        height: '65%',
+        position: 'absolute', inset: 0,
         pointerEvents: 'none', zIndex: 0,
-        backgroundImage: 'url(/bg.jpg)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top',
-        opacity: 0.6,
-        maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.85) 100%)',
-        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.85) 100%)',
-      }} />
+        maskImage: 'linear-gradient(to bottom, transparent 0%, black 33%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 33%)',
+      }}>
+        <img
+          src="/serene-floral-staircase.png"
+          alt=""
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            filter: prismHovered ? 'grayscale(0%)' : 'grayscale(100%)',
+            opacity: 0.7,
+            transition: 'filter 1.2s ease',
+          }}
+        />
+      </div>
 
       {/* Subtle grain overlay */}
       <div style={{
@@ -870,106 +926,77 @@ function Hero() {
       {/* Three.js prism + 2D beam overlay */}
       <PrismBg />
 
+      {/* Atmospheric light rays */}
+      <LightRays />
+
       {/* Coordinates */}
 
 
       {/* Main hero text */}
       <div style={{ position: 'relative', zIndex: 1 }}>
+
+        {/* Heading row — text left, button top-right */}
         <div style={{
-          fontFamily: "'Cormorant Garamond', serif",
-          fontWeight: 300,
-          lineHeight: 0.9,
-          marginBottom: '40px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          gap: '32px',
+          marginBottom: '48px',
         }}>
           <div style={{
-            fontSize: 'clamp(36px, 6vw, 80px)',
+            fontFamily: "'Apple Garamond', Georgia, serif",
+            fontWeight: 300,
+            lineHeight: 1.08,
+            fontSize: 'clamp(40px, 6.5vw, 88px)',
             color: COLORS.textPrimary,
-            letterSpacing: '-0.02em',
+            letterSpacing: '-0.03em',
           }}>
-            Multi—
-          </div>
-          <div style={{
-            fontSize: 'clamp(36px, 6vw, 80px)',
-            color: COLORS.textPrimary,
-            letterSpacing: '-0.02em',
-            display: 'flex',
-            alignItems: 'baseline',
-            flexWrap: 'wrap',
-            gap: '0 0.15em',
-          }}>
-            <span>disciplinary</span>
-          </div>
-          <div style={{
-            fontSize: 'clamp(36px, 6vw, 80px)',
-            color: COLORS.accent,
-            fontStyle: 'italic',
-            letterSpacing: '-0.02em',
-            display: 'flex',
-            alignItems: 'baseline',
-            gap: '0.2em',
-          }}>
-            <span>designer</span>
-            <span style={{
-              fontSize: 'clamp(16px, 2.2vw, 30px)',
-              fontStyle: 'normal',
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 300,
-              color: COLORS.textSecondary,
-              letterSpacing: '0.2em',
-              alignSelf: 'center',
-              marginLeft: '0.3em',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.6em',
-            }}>
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '6px 24px 8px',
-                borderRadius: '100px',
-                background: 'rgba(255,255,255,0.07)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                boxShadow: '0 0 24px rgba(201,185,154,0.12), inset 0 1px 0 rgba(255,255,255,0.08)',
-                opacity: wordVisible ? 1 : 0,
-                transform: wordVisible ? 'translateY(0) scale(1)' : 'translateY(6px) scale(0.97)',
-                transition: 'opacity 0.35s ease, transform 0.35s ease',
-                fontStyle: 'italic',
-                color: COLORS.textPrimary,
-                minWidth: '280px',
-              }}>
-                {ROTATING_WORDS[wordIndex]}
+            It starts with a spark,<br />
+            and becomes{' '}
+            {/* Iridescent word slot */}
+            <span
+              ref={slotRef}
+              style={{
+                display: 'inline-block',
+                position: 'relative',
+                verticalAlign: 'bottom',
+                minWidth: '10px',
+                transition: 'width 0.45s cubic-bezier(0.4,0,0.2,1)',
+              }}
+            >
+              <span
+                ref={wordInnerRef}
+                className="word-slot-inner enter"
+              >
+                {ROTATING_WORDS[0]}
               </span>
             </span>
           </div>
+
+          {/* Button — bottom-right, aligned with end of text */}
+          <div style={{ flexShrink: 0, paddingBottom: '4px' }}>
+            <CTAButton href="#contact">Taking up projects ↗</CTAButton>
+          </div>
         </div>
 
-        {/* Tagline + CTA row */}
+        {/* Tagline row */}
         <div style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '24px',
           borderTop: `1px solid ${COLORS.border}`,
           paddingTop: '32px',
         }}>
           <p style={{
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontWeight: 300,
             fontSize: 'clamp(13px, 1.4vw, 16px)',
-            color: COLORS.textSecondary,
-            maxWidth: '480px',
-            lineHeight: 1.7,
+            color: 'rgba(255,255,255,0.82)',
+            maxWidth: '420px',
+            lineHeight: 1.65,
             margin: 0,
-            letterSpacing: '0.01em',
+            letterSpacing: '0.005em',
           }}>
-            Designing for the future of tech, lifestyle and experience —
-            <br />a multidisciplinary practice spanning brand, digital and space.
+            Hey I'm Priyashree Acharya — User Experience Designer.<br />I study people, then design for them.
           </p>
-          <CTAButton href="#contact">Taking up projects ↗</CTAButton>
+
         </div>
       </div>
 
@@ -977,6 +1004,35 @@ function Hero() {
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
+        }
+        .word-slot-inner {
+          display: inline-block;
+          white-space: nowrap;
+          font-family: 'Apple Garamond', Georgia, serif;
+          font-style: italic;
+          font-weight: 300;
+          letter-spacing: -0.01em;
+          color: #ffffff;
+          text-shadow: 0 0 18px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(210,225,255,0.08), 0 0 140px rgba(200,215,255,0.05);
+          will-change: transform, opacity;
+        }
+        .word-slot-inner.enter {
+          animation: wordIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+        .word-slot-inner.exit {
+          animation: wordOut 0.32s cubic-bezier(0.4,0,1,1) forwards;
+        }
+        @keyframes wordIn {
+          from { opacity: 0; transform: translateY(60%) skewY(4deg); }
+          to   { opacity: 1; transform: translateY(0) skewY(0deg); }
+        }
+        @keyframes wordOut {
+          from { opacity: 1; transform: translateY(0) skewY(0deg); }
+          to   { opacity: 0; transform: translateY(-50%) skewY(-3deg); }
+        }
+        @keyframes shimmer {
+          0%   { background-position: 0% 50%; }
+          100% { background-position: 300% 50%; }
         }
         @media (max-width: 768px) { .adam-ascii-bg { display: none !important; } }
       `}</style>
@@ -986,57 +1042,30 @@ function Hero() {
 
 // ─── SHARED COMPONENTS ────────────────────────────────────────────────────────
 
-function SectionLabel({ children }) {
+function SectionLabel({ children, color }) {
   return (
     <div style={{
-      fontFamily: "'DM Sans', sans-serif",
+      fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
       fontWeight: 400,
       fontSize: '10px',
-      letterSpacing: '0.2em',
-      color: COLORS.textMuted,
-      marginBottom: '48px',
-      display: 'flex',
+      letterSpacing: '0.12em',
+      color: color || COLORS.textSecondary,
+      marginBottom: '32px',
+      display: 'inline-flex',
       alignItems: 'center',
-      gap: '10px',
+      gap: '8px',
     }}>
-      <span style={{ color: COLORS.accent, fontWeight: 500 }}>/</span>
+      <span style={{ color: COLORS.accent, fontWeight: 400 }}>/</span>
       {children}
     </div>
   );
 }
 
 function CTAButton({ href, children, filled = false }) {
-  const [hovered, setHovered] = useState(false);
   return (
     <a
       href={href}
-      style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontWeight: 400,
-        fontSize: '12px',
-        letterSpacing: '0.08em',
-        color: hovered ? COLORS.bg : COLORS.textPrimary,
-        background: hovered
-          ? COLORS.accent
-          : filled
-          ? 'rgba(201,185,154,0.15)'
-          : 'rgba(255,255,255,0.07)',
-        border: '1px solid rgba(255,255,255,0.15)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        padding: '14px 32px',
-        borderRadius: '100px',
-        textDecoration: 'none',
-        display: 'inline-block',
-        transition: 'all 0.3s ease',
-        whiteSpace: 'nowrap',
-        cursor: 'pointer',
-        boxShadow: hovered
-          ? '0 0 20px rgba(201,185,154,0.25)'
-          : '0 0 0px transparent',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={filled ? 'iridescent-btn' : 'frosted-btn'}
       onClick={e => {
         if (href.startsWith('#')) {
           e.preventDefault();
@@ -1051,6 +1080,64 @@ function CTAButton({ href, children, filled = false }) {
 
 function Divider() {
   return <div style={{ borderTop: `1px solid ${COLORS.border}`, width: '100%' }} />;
+}
+
+// White bloom glow word — same effect as "her" in About section
+function GlowWord({ children }) {
+  return (
+    <em style={{
+      fontStyle: 'italic',
+      fontWeight: 'inherit',
+      color: '#ffffff',
+      textShadow: '0 0 18px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(210,225,255,0.08), 0 0 140px rgba(200,215,255,0.05)',
+    }}>
+      {children}
+    </em>
+  );
+}
+
+function IridescentWord({ children }) {
+  return (
+    <span style={{
+      background: 'linear-gradient(90deg, #5dcaa5, #a78bfa, #7dd3fc, #f0abfc, #5dcaa5)',
+      backgroundSize: '300% 100%',
+      WebkitBackgroundClip: 'text',
+      backgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      color: 'transparent',
+      fontStyle: 'italic',
+      animation: 'shimmer 4s linear infinite',
+      display: 'inline',
+    }}>
+      {children}
+    </span>
+  );
+}
+
+// Subtle light ray overlay for atmosphere
+function LightRays() {
+  const rays = [
+    { left: '36%', top: '0',   rotate: '-9deg',  h: '55%', w: '90px',  op: 0.032 },
+    { left: '54%', top: '8%',  rotate: '13deg',  h: '40%', w: '60px',  op: 0.022 },
+    { left: '66%', top: '2%',  rotate: '-4deg',  h: '48%', w: '40px',  op: 0.018 },
+  ];
+  return (
+    <>
+      {rays.map((r, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          left: r.left, top: r.top,
+          width: r.w, height: r.h,
+          background: `linear-gradient(to bottom, rgba(255,255,255,${r.op}), transparent)`,
+          transform: `rotate(${r.rotate}) translateX(-50%)`,
+          pointerEvents: 'none',
+          zIndex: 0,
+          filter: 'blur(6px)',
+          animation: `rayFade ${4 + i * 1.5}s ease-in-out infinite`,
+        }} />
+      ))}
+    </>
+  );
 }
 
 // ─── WORK / SHOWCASE ─────────────────────────────────────────────────────────
@@ -1069,49 +1156,29 @@ function WorkSection() {
       }}
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px', marginBottom: '80px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '80px' }}>
           <div style={fadeUp(visible, 0)}>
-            <SectionLabel>SHOWCASE</SectionLabel>
+            <SectionLabel>SELECTED WORKS</SectionLabel>
             <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 300,
+              fontFamily: "'Apple Garamond', Georgia, serif",
+              fontWeight: 400,
               fontSize: 'clamp(36px, 5vw, 64px)',
               color: COLORS.textPrimary,
-              lineHeight: 1.1,
+              lineHeight: 1.12,
               margin: 0,
-              maxWidth: '560px',
               letterSpacing: '-0.01em',
             }}>
-              Work that exists at the intersection of craft and intent
+              Design for Purpose, <GlowWord>Emotions</GlowWord> and Solutions
             </h2>
-          </div>
-          <div style={{ ...fadeUp(visible, 0.2), maxWidth: '340px', alignSelf: 'flex-end' }}>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 300,
-              fontSize: '14px',
-              color: COLORS.textSecondary,
-              lineHeight: 1.8,
-              margin: '0 0 32px',
-            }}>
-              A selection of projects across brand, product and experience design.
-              Each one a collaboration, a question, a made thing.
-            </p>
-            <div style={{ display: 'flex', gap: '16px', fontFamily: "'DM Sans', sans-serif", fontSize: '10px', letterSpacing: '0.15em', color: COLORS.textMuted }}>
-              <span>A — BRANDING</span>
-              <span style={{ color: COLORS.textVeryMuted }}>·</span>
-              <span>B — DIGITAL</span>
-              <span style={{ color: COLORS.textVeryMuted }}>·</span>
-              <span>C — EXPERIENCE</span>
-            </div>
           </div>
         </div>
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '1px',
-          background: COLORS.border,
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '32px',
+          maxWidth: '960px',
+          margin: '0 auto',
         }}>
           {PROJECTS.map((project, i) => (
             <ProjectCard key={project.id} project={project} delay={i * 0.08} visible={visible} />
@@ -1126,7 +1193,10 @@ function ProjectCard({ project, delay, visible }) {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div
+    <a
+      href={project.url}
+      target="_blank"
+      rel="noopener noreferrer"
       style={{
         ...fadeUp(visible, delay),
         background: hovered ? COLORS.surface : COLORS.bg,
@@ -1134,6 +1204,8 @@ function ProjectCard({ project, delay, visible }) {
         transition: 'background 0.4s ease, opacity 0.8s ease, transform 0.8s ease',
         display: 'flex',
         flexDirection: 'column',
+        textDecoration: 'none',
+        color: 'inherit',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -1152,47 +1224,38 @@ function ProjectCard({ project, delay, visible }) {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        {/* Decorative element */}
-        <div style={{
-          width: '80px',
-          height: '80px',
-          border: `1px solid ${project.accent}`,
-          opacity: hovered ? 0.4 : 0.15,
-          transition: 'opacity 0.4s ease, transform 0.4s ease',
-          transform: hovered ? 'rotate(45deg) scale(1.1)' : 'rotate(45deg)',
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '16px',
-          right: '16px',
-          fontFamily: "'Cormorant Garamond', serif",
-          fontSize: '64px',
-          fontWeight: 300,
-          color: project.accent,
-          opacity: 0.12,
-          lineHeight: 1,
-          userSelect: 'none',
-        }}>
-          {project.category}
-        </div>
+        {project.image ? (
+          <img src={project.image} alt={project.name} style={{
+            width: '100%', height: '100%',
+            objectFit: 'cover', objectPosition: 'center', display: 'block',
+            filter: hovered ? 'grayscale(0%)' : 'grayscale(100%)',
+            transition: 'filter 0.5s ease',
+          }} />
+        ) : (
+          <div style={{
+            width: '80px', height: '80px',
+            border: `1px solid ${project.accent}`,
+            opacity: hovered ? 0.4 : 0.15,
+            transition: 'opacity 0.4s ease, transform 0.4s ease',
+            transform: hovered ? 'rotate(45deg) scale(1.1)' : 'rotate(45deg)',
+          }} />
+        )}
       </div>
 
       {/* Card info */}
       <div style={{ padding: '24px 28px 28px', flex: 1, borderTop: `1px solid ${COLORS.border}` }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          marginBottom: '10px',
-        }}>
-          <span style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: '10px',
-            letterSpacing: '0.15em',
-            color: COLORS.textMuted,
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+          <h3 style={{
+            fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            fontWeight: 300,
+            fontSize: '22px',
+            color: hovered ? COLORS.accent : COLORS.textPrimary,
+            margin: 0,
+            letterSpacing: '-0.01em',
+            transition: 'color 0.3s ease',
           }}>
-            {project.category} — {project.categoryLabel}
-          </span>
+            {project.name}
+          </h3>
           <span style={{
             fontSize: '14px',
             color: hovered ? COLORS.accent : COLORS.textMuted,
@@ -1201,29 +1264,18 @@ function ProjectCard({ project, delay, visible }) {
             transform: hovered ? 'translate(3px, -3px)' : 'translate(0,0)',
           }}>↗</span>
         </div>
-        <h3 style={{
-          fontFamily: "'Cormorant Garamond', serif",
-          fontWeight: 300,
-          fontSize: '28px',
-          color: hovered ? COLORS.accent : COLORS.textPrimary,
-          margin: '0 0 8px',
-          letterSpacing: '0.05em',
-          transition: 'color 0.3s ease',
-        }}>
-          {project.name}
-        </h3>
-        <p style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontWeight: 300,
-          fontSize: '12px',
+        <span style={{
+          fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          fontSize: '10px',
+          letterSpacing: '0.08em',
           color: COLORS.textSecondary,
-          margin: '0 0 12px',
-          letterSpacing: '0.02em',
+          display: 'block',
+          marginBottom: '12px',
         }}>
-          {project.type}
-        </p>
+          {project.categoryLabel}
+        </span>
         <p style={{
-          fontFamily: "'DM Sans', sans-serif",
+          fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
           fontWeight: 300,
           fontSize: '12px',
           color: COLORS.textMuted,
@@ -1236,7 +1288,7 @@ function ProjectCard({ project, delay, visible }) {
           {project.description}
         </p>
       </div>
-    </div>
+    </a>
   );
 }
 
@@ -1256,34 +1308,20 @@ function DigestsSection() {
       }}
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px', marginBottom: '80px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '80px', gap: '20px' }}>
           <div style={fadeUp(visible, 0)}>
             <SectionLabel>ANNOTATIONS</SectionLabel>
             <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 300,
+              fontFamily: "'Apple Garamond', Georgia, serif",
+              fontWeight: 400,
               fontSize: 'clamp(36px, 5vw, 64px)',
               color: COLORS.textPrimary,
-              lineHeight: 1.1,
+              lineHeight: 1.12,
               margin: 0,
-              maxWidth: '520px',
               letterSpacing: '-0.01em',
             }}>
-              Thoughts on behaviour, design and everything I'm still figuring out.
+              Some <GlowWord>reflections</GlowWord> worth noting.
             </h2>
-          </div>
-          <div style={{ ...fadeUp(visible, 0.15), alignSelf: 'flex-end' }}>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 300,
-              fontSize: '14px',
-              color: COLORS.textSecondary,
-              lineHeight: 1.8,
-              margin: '0 0 24px',
-              maxWidth: '300px',
-            }}>
-              Field notes across research — self-reflections on projects that finished and ones that didn't.
-            </p>
           </div>
         </div>
 
@@ -1314,13 +1352,14 @@ function DigestCard({ article, delay, visible }) {
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => article.url && window.open(article.url, '_blank')}
     >
       {/* Number */}
       <span style={{
-        fontFamily: "'Cormorant Garamond', serif",
+        fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
         fontWeight: 300,
-        fontSize: '14px',
-        color: COLORS.textVeryMuted,
+        fontSize: '11px',
+        color: COLORS.textMuted,
         minWidth: '28px',
         paddingTop: '4px',
       }}>
@@ -1339,51 +1378,59 @@ function DigestCard({ article, delay, visible }) {
         alignItems: 'center',
         justifyContent: 'center',
         transition: 'background 0.3s ease',
+        overflow: 'hidden',
       }}>
-        <div style={{
-          width: '30px', height: '30px',
-          border: `1px solid ${COLORS.border}`,
-          transform: 'rotate(45deg)',
-          opacity: hovered ? 0.6 : 0.2,
-          transition: 'opacity 0.3s ease',
-        }} />
+        {article.image ? (
+          <img src={article.image} alt={article.title} style={{
+            width: '100%', height: '100%', objectFit: 'cover',
+          }} />
+        ) : (
+          <div style={{
+            width: '30px', height: '30px',
+            border: `1px solid ${COLORS.border}`,
+            transform: 'rotate(45deg)',
+            opacity: hovered ? 0.6 : 0.2,
+            transition: 'opacity 0.3s ease',
+          }} />
+        )}
       </div>
 
       {/* Content */}
       <div style={{ flex: 1 }}>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '12px' }}>
           <span style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: '9px',
-            letterSpacing: '0.2em',
-            color: COLORS.textMuted,
+            fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            fontSize: '10px',
+            letterSpacing: '0.06em',
+            color: COLORS.textSecondary,
             border: `1px solid ${COLORS.border}`,
-            padding: '3px 8px',
+            padding: '3px 10px',
           }}>
             {article.tag}
           </span>
           <span style={{
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontSize: '10px',
-            color: COLORS.textVeryMuted,
-            letterSpacing: '0.05em',
+            color: COLORS.textMuted,
+            letterSpacing: '0.04em',
           }}>
             {article.readTime}
           </span>
         </div>
         <h3 style={{
-          fontFamily: "'Cormorant Garamond', serif",
+          fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
           fontWeight: 300,
-          fontSize: '22px',
+          fontSize: '20px',
           color: hovered ? COLORS.accent : COLORS.textPrimary,
           margin: '0 0 8px',
           transition: 'color 0.3s ease',
-          letterSpacing: '0.01em',
+          letterSpacing: '-0.01em',
+          lineHeight: 1.35,
         }}>
           {article.title}
         </h3>
         <p style={{
-          fontFamily: "'DM Sans', sans-serif",
+          fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
           fontWeight: 300,
           fontSize: '13px',
           color: COLORS.textSecondary,
@@ -1408,160 +1455,363 @@ function DigestCard({ article, delay, visible }) {
   );
 }
 
-// ─── CABINET ─────────────────────────────────────────────────────────────────
+// ─── ABOUT ───────────────────────────────────────────────────────────────────
+
+function SkillCircle({ label }) {
+  const [hovered, setHovered] = useState(false);
+  const size = 160;
+  const r = (size / 2) - 1;
+  const circumference = 2 * Math.PI * r;
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+      }}
+    >
+      {/* Static base border */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        <circle
+          cx={size / 2} cy={size / 2} r={r}
+          fill="none"
+          stroke="rgba(255,255,255,0.3)"
+          strokeWidth="1"
+        />
+      </svg>
+
+      {/* Animated trim-path stroke with glow */}
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', opacity: hovered ? 1 : 0, transition: 'opacity 0.15s ease' }}>
+        <defs>
+          <filter id="circle-glow">
+            <feGaussianBlur stdDeviation="1.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <circle
+          cx={size / 2} cy={size / 2} r={r}
+          fill="none"
+          stroke="rgba(255,255,255,0.7)"
+          strokeWidth="1"
+          filter="url(#circle-glow)"
+          strokeDasharray={circumference}
+          strokeDashoffset={hovered ? 0 : circumference}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          style={{ transition: hovered ? 'stroke-dashoffset 0.55s ease' : 'none' }}
+        />
+      </svg>
+
+      {/* Text */}
+      <span style={{
+        fontFamily: "'Apple Garamond', Georgia, serif",
+        fontWeight: 300,
+        fontSize: '14px',
+        color: '#ffffff',
+        textAlign: 'center',
+        lineHeight: 1.5,
+        whiteSpace: 'pre-line',
+        position: 'relative',
+        zIndex: 1,
+        transition: 'text-shadow 0.3s ease',
+        textShadow: hovered
+          ? '0 0 12px rgba(255,255,255,0.9), 0 0 24px rgba(255,255,255,0.4)'
+          : 'none',
+      }}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
+const TOOLS = ['Figma', 'Framer', 'React', 'After Effects', 'Premiere', 'Illustrator', 'Photoshop', 'Miro', 'Notion', 'Webflow'];
 
 function CabinetSection() {
   const [ref, visible] = useFadeIn();
+
+  const skillGroups = [
+    { label: 'Research', skills: ['UserTesting', 'Google Forms', 'Perplexity'] },
+    { label: 'Design and Prototyping', skills: ['Figma', 'Protopie', 'Framer', 'Lottie'] },
+    { label: 'Thinking and Systems', skills: ['Miro', 'FigJam', 'Notion'] },
+    { label: 'AI Tools', skills: ['ChatGPT', 'Claude', 'Midjourney', 'Galileo AI', 'Uizard'] },
+  ];
+
+  const education = [
+    {
+      initials: 'NID',
+      degree: 'M.Des Design for Retail Experience',
+      institution: 'National Institute of Design',
+      years: '2024 – 26',
+    },
+    {
+      initials: 'DU',
+      degree: 'B.A. Psychology Honours',
+      institution: 'Daulat Ram College, University of Delhi',
+      years: '2020 – 23',
+    },
+    {
+      initials: 'SA',
+      degree: 'Graphic Design Diploma',
+      institution: 'Sri Aurobindo Centre for Arts and Creativity',
+      years: '2022 – 23',
+    },
+  ];
+
+  const labelStyle = {
+    fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+    fontSize: '10px',
+    fontWeight: 400,
+    letterSpacing: '0.12em',
+    color: 'rgba(255,255,255,0.4)',
+    textTransform: 'uppercase',
+    marginBottom: '10px',
+  };
+
+  const bodyTextStyle = {
+    fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+    fontWeight: 300,
+    fontSize: 'clamp(13px, 1.3vw, 15px)',
+    color: 'rgba(255,255,255,0.65)',
+    lineHeight: 1.75,
+    letterSpacing: '0.005em',
+    margin: 0,
+  };
 
   return (
     <section
       id="about"
       ref={ref}
       style={{
-        background: COLORS.bgAlt,
-        padding: '120px 40px',
+        background: '#0b0a09',
+        padding: '120px 40px 160px',
         borderTop: `1px solid ${COLORS.border}`,
       }}
     >
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <SectionLabel>CABINET</SectionLabel>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start', flexWrap: 'wrap' }}>
-          {/* Left: Approach */}
-          <div style={fadeUp(visible, 0)}>
-            <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
+        {/* Centred heading above columns */}
+        <div style={{ ...fadeUp(visible, 0), textAlign: 'center', marginBottom: '80px' }}>
+          <h2 style={{
+            fontFamily: "'Apple Garamond', Georgia, serif",
+            fontWeight: 300,
+            fontSize: 'clamp(36px, 5vw, 72px)',
+            color: COLORS.textPrimary,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.1,
+            margin: 0,
+          }}>
+            About{' '}
+            <em style={{
+              fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: 'clamp(36px, 4.5vw, 58px)',
-              color: COLORS.textPrimary,
-              lineHeight: 1.15,
-              margin: '0 0 40px',
-              letterSpacing: '-0.01em',
-            }}>
-              Design that holds its ground — and its warmth
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {[
-                { n: '01', t: 'Intent-led', b: 'Every project starts with a question. What should this feel like? What should it do in the world? Design follows from there.' },
-                { n: '02', t: 'Craft as care', b: 'The details are not decoration. Typography, spacing, texture — these are the places where respect for the viewer lives.' },
-                { n: '03', t: 'Honest work', b: 'No trend-chasing, no bloat. Just clear thinking made visible. If it doesn\'t need to be there, it isn\'t.' },
-              ].map(item => (
-                <div key={item.n} style={{ display: 'flex', gap: '24px', paddingTop: '24px', borderTop: `1px solid ${COLORS.border}` }}>
-                  <span style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: '10px',
-                    color: COLORS.textVeryMuted,
-                    letterSpacing: '0.1em',
-                    paddingTop: '3px',
-                    minWidth: '24px',
-                  }}>{item.n}</span>
-                  <div>
-                    <div style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 500,
-                      fontSize: '13px',
-                      color: COLORS.textPrimary,
-                      letterSpacing: '0.05em',
-                      marginBottom: '8px',
-                    }}>{item.t}</div>
-                    <p style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 300,
-                      fontSize: '13px',
-                      color: COLORS.textSecondary,
-                      lineHeight: 1.8,
-                      margin: 0,
-                    }}>{item.b}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+              color: '#ffffff',
+              textShadow: '0 0 18px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(210,225,255,0.08), 0 0 140px rgba(200,215,255,0.05)',
+            }}>Her</em>
+          </h2>
+          <p style={{
+            fontFamily: "'Apple Garamond', Georgia, serif",
+            fontStyle: 'italic',
+            fontWeight: 300,
+            fontSize: 'clamp(16px, 1.8vw, 22px)',
+            color: '#D81060',
+            margin: '24px 0 0 0',
+            letterSpacing: '-0.01em',
+            lineHeight: 1.5,
+          }}>
+            "I don't just design how things look. I design how they feel, behave, and stay with you"
+          </p>
+        </div>
+
+        <div className="about-grid">
+
+          {/* ── Left column: photo + education ── */}
+          <div style={{ ...fadeUp(visible, 0), display: 'flex', flexDirection: 'column', gap: '56px' }}>
+
+            {/* Portrait */}
+            <img
+              src="/Priyashreeweb.png"
+              alt="Priyashree Acharya"
+              style={{
+                width: '80%',
+                borderRadius: '8px',
+                display: 'block',
+                filter: 'grayscale(100%)',
+                objectFit: 'cover',
+              }}
+            />
+
           </div>
 
-          {/* Right: Services */}
-          <div style={fadeUp(visible, 0.2)}>
+          {/* ── Right column: text content ── */}
+          <div style={{ ...fadeUp(visible, 0.1), display: 'flex', flexDirection: 'column', gap: '36px', justifyContent: 'center', alignSelf: 'center' }}>
+
+            {/* Subline */}
             <p style={{
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Apple Garamond', Georgia, serif",
+              fontStyle: 'italic',
               fontWeight: 300,
-              fontSize: '13px',
-              color: COLORS.textSecondary,
-              lineHeight: 1.9,
-              margin: '0 0 48px',
+              fontSize: 'clamp(16px, 1.8vw, 22px)',
+              color: 'rgba(255,255,255,0.5)',
+              margin: 0,
+              letterSpacing: '-0.01em',
+              lineHeight: 1.4,
             }}>
-              Whether it's a brand that needs to find its voice, a product that needs to earn trust, or a space that needs to feel like something —
-              <em style={{ color: COLORS.accent, fontStyle: 'italic' }}> I work across the full range of what design can do.</em>
+              Hey! I am Priyashree Acharya
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-              {CABINET_SERVICES.map((service, i) => (
-                <ServiceRow key={service.label} service={service} />
+
+            {/* Body paragraphs */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {[
+                'I\'m an experience designer working at the intersection of human behaviour and design. With a background in psychology and a deep curiosity for how people think, feel, and act, I design experiences that are intuitive, intentional, and emotionally aware.',
+                'I started with people long before I started with pixels. Understanding behaviour came first, why someone hesitates, what they avoid, what they feel but don\'t express. That lens still shapes how I approach every brief, not as an aesthetic problem, but as a human one.',
+                'Over time, design became the way I act on that understanding. A way to translate insight into something tangible, something people can move through, not just look at.',
+                'I ask more questions than most. I don\'t settle early, and I don\'t treat rigour as optional. Because the work I care about isn\'t just about making things work, it\'s about changing how something is experienced.',
+              ].map((para, i) => (
+                <p key={i} style={bodyTextStyle}>{para}</p>
               ))}
             </div>
+
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
 
-function ServiceRow({ service }) {
-  const [open, setOpen] = useState(false);
+        {/* My Journey section */}
+        <div style={{ ...fadeUp(visible, 0.2), textAlign: 'center', marginTop: '120px' }}>
+          <h2 style={{
+            fontFamily: "'Apple Garamond', Georgia, serif",
+            fontWeight: 300,
+            fontSize: 'clamp(32px, 4vw, 56px)',
+            color: COLORS.textPrimary,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.1,
+            margin: 0,
+          }}>
+            My <em style={{ fontStyle: 'italic' }}>journey so far</em>
+          </h2>
+        </div>
 
-  return (
-    <div style={{ borderTop: `1px solid ${COLORS.border}` }}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: '100%',
-          background: 'none',
-          border: 'none',
-          padding: '20px 0',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          cursor: 'pointer',
-        }}
-      >
-        <span style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontWeight: 400,
-          fontSize: '13px',
-          letterSpacing: '0.1em',
-          color: COLORS.textPrimary,
-        }}>
-          {service.label}
-        </span>
-        <span style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: '16px',
-          color: COLORS.accent,
-          transform: open ? 'rotate(45deg)' : 'rotate(0)',
-          transition: 'transform 0.3s ease',
-          display: 'inline-block',
-        }}>+</span>
-      </button>
-      {open && (
+        {/* Education 3-column grid */}
         <div style={{
-          paddingBottom: '20px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '8px',
+          ...fadeUp(visible, 0.25),
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '48px',
+          marginTop: '72px',
+          textAlign: 'center',
         }}>
-          {service.items.map(item => (
-            <span key={item} style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 300,
-              fontSize: '11px',
-              letterSpacing: '0.08em',
-              color: COLORS.textSecondary,
-              border: `1px solid ${COLORS.border}`,
-              padding: '5px 12px',
-            }}>
-              {item}
-            </span>
+          {[
+            {
+              degree: 'Psychology Honours',
+              institution: 'Daulat Ram College\nUniversity of Delhi',
+              years: '2020 – 23',
+              logo: '/du-logo.png',
+            },
+            {
+              degree: 'Graphic Design Diploma',
+              institution: 'Sri Aurobindo Centre\nfor Arts and Creativity',
+              years: '2022 – 23',
+              logo: '/sacac-logo.png',
+            },
+            {
+              degree: 'Design for Retail Experience',
+              institution: 'National Institute\nof Design',
+              years: '2024 – 26',
+              logo: '/nid-logo-new.png',
+            },
+          ].map((ed, i) => (
+            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+              {/* Institution logo */}
+              <div style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                flexShrink: 0,
+              }}>
+                <img src={ed.logo} alt={ed.institution} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              {/* Degree */}
+              <div style={{
+                fontFamily: "'Apple Garamond', Georgia, serif",
+                fontStyle: 'italic',
+                fontWeight: 300,
+                fontSize: '14px',
+                color: 'rgba(255,255,255,0.85)',
+                lineHeight: 1.4,
+              }}>
+                {ed.degree}
+              </div>
+              {/* Institution + year */}
+              <div style={{
+                fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                fontWeight: 300,
+                fontSize: '11px',
+                color: 'rgba(255,255,255,0.4)',
+                lineHeight: 1.6,
+                letterSpacing: '0.01em',
+                whiteSpace: 'pre-line',
+              }}>
+                {ed.institution}{'\n'}{ed.years}
+              </div>
+            </div>
           ))}
         </div>
-      )}
-    </div>
+
+        {/* What do I bring to the table */}
+        <div style={{ ...fadeUp(visible, 0.3), textAlign: 'center', marginTop: '120px' }}>
+          <h2 style={{
+            fontFamily: "'Apple Garamond', Georgia, serif",
+            fontWeight: 300,
+            fontSize: 'clamp(32px, 4vw, 56px)',
+            color: COLORS.textPrimary,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.1,
+            margin: 0,
+          }}>
+            What do I bring to <em style={{ fontStyle: 'italic' }}>the table</em>
+          </h2>
+        </div>
+
+        {/* Skill circles */}
+        <div style={{
+          ...fadeUp(visible, 0.35),
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '40px',
+          marginTop: '64px',
+          flexWrap: 'wrap',
+        }}>
+          {['Behavioural\nInsight', 'Storytelling', 'Visual\nDesign', 'Design\nThinking'].map((label, i) => (
+            <SkillCircle key={i} label={label} />
+          ))}
+        </div>
+
+      </div>
+
+      <style>{`
+        .about-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+          gap: 80px;
+          align-items: center;
+        }
+        @media (max-width: 768px) {
+          .about-grid {
+            grid-template-columns: 1fr !important;
+            gap: 48px !important;
+          }
+        }
+      `}</style>
+    </section>
   );
 }
 
@@ -1571,12 +1821,42 @@ function SandboxSection() {
   const [ref, visible] = useFadeIn();
 
   const experiments = [
-    { label: 'Poster archive', sub: 'Ongoing collection of type explorations' },
-    { label: 'Type specimens', sub: 'Playing with custom lettering & forms' },
-    { label: 'Texture studies', sub: 'Material & surface experiments' },
-    { label: 'Movement notes', sub: 'Motion sketches & animation trials' },
-    { label: 'Field sketchbook', sub: 'Drawing from observation & travel' },
-    { label: 'Collage works', sub: 'Analog & digital cut-and-paste' },
+    {
+      label: 'Why concrete words stick and abstract ones don\'t',
+      sub: 'Concrete word pairs hit 100% recall. Abstract ones dropped to 74.99% — how you say something changes whether people remember it.',
+      tags: ['Paivio word pair list', 'Dual coding theory', 'Recall experiment'],
+      url: 'https://docs.google.com/document/d/1cBzh3825bv5bK9d0H_P7jH_wmcmwiG1W-YG6cgBuiLI/edit',
+    },
+    {
+      label: 'When colour fights the brain',
+      sub: 'When visual information contradicts meaning, the brain slows and errors increase — a window into attention and automaticity.',
+      tags: ['Stroop Test', 'Reaction time', 'Cognitive interference'],
+      url: 'https://docs.google.com/document/d/1UnFdGajhx_QwbaVNGQN9HmtscaTfl-zR/edit?usp=sharing&ouid=117923889145803854754&rtpof=true&sd=true',
+    },
+    {
+      label: 'Body image, filters and how we see ourselves',
+      sub: '112 college students surveyed. 30% of females wanted to change their weight. 25% of males wanted to change nothing.',
+      tags: ['Self-constructed questionnaire', 'Content analysis', 'Thematic analysis'],
+      url: 'https://docs.google.com/document/d/1t7qYf1MzJk0FyOVRZphU1ASELNXKTSzCrhCaoMp4pfM/edit',
+    },
+    {
+      label: 'Why age makes you care more about the planet',
+      sub: '81 people, 3 age groups. Feeling connected to nature predicts eco-behaviour — middle adults were significantly more pro-environmental than adolescents.',
+      tags: ['Nature connectedness scale', 'Ecological behavior', 'Correlation & ANOVA'],
+      url: 'https://docs.google.com/document/d/1JjNFQxrIB3tctIh6h7j01euwegBWw-LdHQtHGh0aAOA/edit',
+    },
+    {
+      label: 'What others see in you that you can\'t',
+      sub: 'I ranked creativity 10th. Everyone I asked ranked it 1st or 2nd. A 7-day intervention on my lowest strength raised my flourishing score from 48 to 51.',
+      tags: ['VIA Inventory of Strengths', 'Flourishing Scale', 'ABA intervention'],
+      url: 'https://docs.google.com/document/d/1Q1Vk7zJyXcGL5CsnOIF8c88ZaHpFHp-wUbUNSgzMhws/edit',
+    },
+    {
+      label: 'How we reason through impossible choices',
+      sub: 'How people reason through moral dilemmas — from rule-following to principled thinking — when two values can\'t both be upheld.',
+      tags: ['Kohlberg\'s theory', 'Moral reasoning', 'Stage-based assessment'],
+      url: 'https://docs.google.com/document/d/1GAecQEpSJQoTQPgun8-uhQGbF8zL4RXs/edit',
+    },
   ];
 
   return (
@@ -1590,34 +1870,31 @@ function SandboxSection() {
       }}
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '80px', flexWrap: 'wrap', gap: '40px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '80px', gap: '20px' }}>
           <div style={fadeUp(visible, 0)}>
-            <SectionLabel>SANDBOX</SectionLabel>
+            <SectionLabel>BACKGROUND CHECK</SectionLabel>
             <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 300,
-              fontStyle: 'italic',
+              fontFamily: "'Apple Garamond', Georgia, serif",
+              fontWeight: 400,
               fontSize: 'clamp(36px, 5vw, 64px)',
               color: COLORS.textPrimary,
-              lineHeight: 1.1,
+              lineHeight: 1.12,
               margin: 0,
-              maxWidth: '540px',
               letterSpacing: '-0.01em',
             }}>
-              Where the brief ends and the real work begins
+              What was I doing <GlowWord>before</GlowWord> design?
             </h2>
           </div>
-          <div style={{ ...fadeUp(visible, 0.15), maxWidth: '320px', alignSelf: 'flex-end' }}>
+          <div style={fadeUp(visible, 0.15)}>
             <p style={{
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
               fontWeight: 300,
               fontSize: '14px',
               color: COLORS.textSecondary,
               lineHeight: 1.8,
               margin: 0,
             }}>
-              Off-hours experiments, self-set briefs, and the work that happens when no one is watching.
-              This is where I keep the things I make for the love of making.
+              Design shaped by behavioral psychology and real conversations. Understanding people is where it begins.
             </p>
           </div>
         </div>
@@ -1639,9 +1916,25 @@ function SandboxSection() {
 
 function SandboxCard({ exp, delay, visible }) {
   const [hovered, setHovered] = useState(false);
+  const cardRef = useRef(null);
+  const [perimeter, setPerimeter] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      if (cardRef.current) {
+        const { offsetWidth: w, offsetHeight: h } = cardRef.current;
+        setPerimeter(2 * (w + h));
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
 
   return (
+    <a href={exp.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit', display: 'contents' }}>
     <div
+      ref={cardRef}
       style={{
         ...fadeUp(visible, delay),
         background: hovered ? COLORS.surface : COLORS.bg,
@@ -1652,10 +1945,52 @@ function SandboxCard({ exp, delay, visible }) {
         flexDirection: 'column',
         gap: '12px',
         minHeight: '160px',
+        position: 'relative',
+        overflow: 'hidden',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* Trim path stroke border */}
+      {perimeter > 0 && (
+        <svg
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            opacity: hovered ? 1 : 0,
+            transition: 'opacity 0.15s ease',
+          }}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <filter id="stroke-glow">
+              <feGaussianBlur stdDeviation="1.2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <rect
+            x="1"
+            y="1"
+            width="99%"
+            height="99%"
+            fill="none"
+            stroke="rgba(255,255,255,0.5)"
+            strokeWidth="0.6"
+            filter="url(#stroke-glow)"
+            strokeDasharray={perimeter}
+            strokeDashoffset={hovered ? 0 : perimeter}
+            style={{
+              transition: hovered ? 'stroke-dashoffset 0.5s ease' : 'none',
+            }}
+          />
+        </svg>
+      )}
       <div style={{
         width: '24px',
         height: '1px',
@@ -1664,28 +1999,48 @@ function SandboxCard({ exp, delay, visible }) {
         ...(hovered ? { width: '40px' } : {}),
       }} />
       <h3 style={{
-        fontFamily: "'Cormorant Garamond', serif",
+        fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
         fontWeight: 300,
-        fontSize: '20px',
-        color: hovered ? COLORS.textPrimary : COLORS.textSecondary,
+        fontSize: '18px',
+        color: hovered ? COLORS.textPrimary : '#918e87',
         margin: 0,
-        letterSpacing: '0.02em',
+        letterSpacing: '-0.01em',
+        lineHeight: 1.4,
         transition: 'color 0.3s ease',
       }}>
         {exp.label}
       </h3>
       <p style={{
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
         fontWeight: 300,
         fontSize: '11px',
-        color: COLORS.textMuted,
+        color: hovered ? '#7a7870' : COLORS.textMuted,
         margin: 0,
         letterSpacing: '0.05em',
         lineHeight: 1.6,
+        transition: 'color 0.3s ease',
       }}>
         {exp.sub}
       </p>
+      {exp.tags && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
+          {exp.tags.map(tag => (
+            <span key={tag} style={{
+              fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              fontSize: '10px',
+              letterSpacing: '0.04em',
+              color: hovered ? 'rgba(255,255,255,0.75)' : COLORS.textMuted,
+              border: `1px solid ${COLORS.border}`,
+              padding: '3px 10px',
+              transition: 'color 0.3s ease',
+            }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
+    </a>
   );
 }
 
@@ -1703,42 +2058,74 @@ function ContactSection() {
       id="contact"
       ref={ref}
       style={{
-        background: COLORS.bgAlt,
-        borderTop: `1px solid ${COLORS.border}`,
+        background: '#0b0a09',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Forest portal background image */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+        maskImage: 'linear-gradient(to bottom, transparent 0%, black 22%), linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 22%), linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+      }}>
+        <img
+          src="/ethereal-forest-portal.png"
+          alt=""
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center 40%',
+            opacity: 0.55,
+          }}
+        />
+      </div>
+
       {/* Big CTA */}
       <div style={{
-        padding: '120px 40px 80px',
-        borderBottom: `1px solid ${COLORS.border}`,
+        padding: '120px 80px 80px',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
         display: 'flex',
-        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        flexWrap: 'wrap',
         gap: '48px',
+        position: 'relative',
+        zIndex: 1,
       }}>
-        <div style={fadeUp(visible, 0)}>
-          <SectionLabel>LET'S TALK</SectionLabel>
+        {/* Left — label + heading */}
+        <div style={{ ...fadeUp(visible, 0), textAlign: 'left' }}>
+          <SectionLabel color="rgba(255,255,255,0.5)">LET'S CONNECT</SectionLabel>
           <h2 style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontWeight: 300,
+            fontFamily: "'Apple Garamond', Georgia, serif",
+            fontWeight: 400,
             fontSize: 'clamp(56px, 10vw, 130px)',
             color: COLORS.textPrimary,
-            lineHeight: 0.95,
+            lineHeight: 1.0,
             margin: 0,
             letterSpacing: '-0.02em',
           }}>
-            build<br />
-            <em style={{ color: COLORS.accent }}>together?</em>
+            <GlowWord>Create</GlowWord><br />
+            Together?
           </h2>
         </div>
-        <div style={{ ...fadeUp(visible, 0.2), display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <CTAButton href="mailto:hello@nivedhanirmal.com" filled>GET TALKING</CTAButton>
+
+        {/* Right — button + email */}
+        <div style={{ ...fadeUp(visible, 0.2), display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+          <CTAButton href="mailto:Priyashree@nid.edu">GET TALKING</CTAButton>
           <a
-            href="mailto:hello@nivedhanirmal.com"
+            href="mailto:Priyashree@nid.edu"
             style={{
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
               fontWeight: 300,
               fontSize: '13px',
-              color: emailHovered ? COLORS.textPrimary : COLORS.textSecondary,
+              color: emailHovered ? '#ffffff' : 'rgba(255,255,255,0.6)',
               letterSpacing: '0.05em',
               textDecoration: 'none',
               transition: 'color 0.3s ease',
@@ -1746,7 +2133,7 @@ function ContactSection() {
             onMouseEnter={() => setEmailHovered(true)}
             onMouseLeave={() => setEmailHovered(false)}
           >
-            hello@nivedhanirmal.com
+            Priyashree@nid.edu
           </a>
         </div>
       </div>
@@ -1756,6 +2143,8 @@ function ContactSection() {
         padding: '48px 40px',
         display: 'flex',
         justifyContent: 'space-between',
+        position: 'relative',
+        zIndex: 1,
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '32px',
@@ -1763,38 +2152,38 @@ function ContactSection() {
         {/* Name + copyright */}
         <div>
           <div style={{
-            fontFamily: "'Cormorant Garamond', serif",
+            fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontWeight: 300,
             fontSize: '16px',
-            color: COLORS.textPrimary,
+            color: '#ffffff',
             marginBottom: '6px',
             letterSpacing: '0.02em',
           }}>
             Priyashree Acharya
 </div>
           <div style={{
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
             fontSize: '10px',
-            color: COLORS.textVeryMuted,
-            letterSpacing: '0.1em',
+            color: 'rgba(255,255,255,0.3)',
+            letterSpacing: '0.05em',
           }}>
-            © 2026 — All rights reserved
+            © 2026
           </div>
         </div>
 
-        {/* Footer nav */}
-        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-          {footerLinks.map(link => (
-            <FooterLink key={link} label={link} />
-          ))}
+        {/* Vibecoded */}
+        <div style={{
+          fontFamily: "'Apple Garamond', Georgia, serif",
+          fontWeight: 300,
+          fontStyle: 'italic',
+          fontSize: '15px',
+          color: 'rgba(255,255,255,0.75)',
+          letterSpacing: '0.04em',
+          textShadow: '0 0 18px rgba(255,255,255,0.4), 0 0 40px rgba(200,210,255,0.2)',
+        }}>
+          Vibecoded with love
         </div>
 
-        {/* Social */}
-        <div style={{ display: 'flex', gap: '20px' }}>
-          {socialLinks.map(link => (
-            <FooterLink key={link} label={link} />
-          ))}
-        </div>
       </div>
     </section>
   );
@@ -1806,10 +2195,10 @@ function FooterLink({ label }) {
     <a
       href="#"
       style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: '10px',
+        fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        fontSize: '9px',
         letterSpacing: '0.12em',
-        color: hovered ? COLORS.textSecondary : COLORS.textMuted,
+        color: hovered ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.35)',
         textDecoration: 'none',
         transition: 'color 0.3s ease',
       }}
@@ -1924,12 +2313,12 @@ function SplashScreen({ onDone }) {
 
       {/* Label */}
       <div style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: '22px',
+        fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+        fontSize: '11px',
         letterSpacing: '0.1em',
-        color: '#fff',
+        color: 'rgba(255,255,255,0.7)',
         textTransform: 'uppercase',
-        marginTop: '32px',
+        marginTop: '28px',
       }}>
         {SPLASH_LABELS[labelIndex]}
       </div>
@@ -1939,32 +2328,79 @@ function SplashScreen({ onDone }) {
 
 // ─── APP ROOT ─────────────────────────────────────────────────────────────────
 
-export default function App() {
-  const [showSplash, setShowSplash] = useState(
-    () => !sessionStorage.getItem('splashSeen')
-  );
-  const [splashDone, setSplashDone] = useState(
-    () => !!sessionStorage.getItem('splashSeen')
-  );
-
-  const handleSplashDone = useCallback(() => {
-    sessionStorage.setItem('splashSeen', 'true');
-    setShowSplash(false);
-    setSplashDone(true);
-  }, []);
+function StarCursor() {
+  const cursorRef = useRef(null);
+  const pos = useRef({ x: -100, y: -100 });
+  const rafRef = useRef(null);
 
   useEffect(() => {
-    // Inject Google Fonts
+    const el = cursorRef.current;
+    if (!el) return;
+
+    const onMove = (e) => {
+      pos.current = { x: e.clientX, y: e.clientY };
+      if (!rafRef.current) {
+        rafRef.current = requestAnimationFrame(() => {
+          el.style.left = pos.current.x + 'px';
+          el.style.top  = pos.current.y + 'px';
+          rafRef.current = null;
+        });
+      }
+    };
+
+    const CLICKABLE = 'a, button, [role="button"], input, label, select, textarea, [tabindex]';
+
+    const onOver = (e) => {
+      if (e.target.closest(CLICKABLE)) {
+        el.style.animation = 'starPulse 0.6s ease-in-out infinite';
+      }
+    };
+
+    const onOut = (e) => {
+      if (e.target.closest(CLICKABLE)) {
+        el.style.animation = 'none';
+        el.style.fontSize  = '18px';
+      }
+    };
+
+    window.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseover', onOver);
+    document.addEventListener('mouseout',  onOut);
+
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseover', onOver);
+      document.removeEventListener('mouseout',  onOut);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  return (
+    <div ref={cursorRef} style={{
+      position: 'fixed',
+      pointerEvents: 'none',
+      zIndex: 99999,
+      fontSize: '18px',
+      color: '#ffffff',
+      transform: 'translate(-50%, -50%) rotate(-20deg)',
+      userSelect: 'none',
+      lineHeight: 1,
+      left: '-100px',
+      top: '-100px',
+    }}>✦</div>
+  );
+}
+
+function useGlobalSetup() {
+  useEffect(() => {
     const existing = document.querySelector('link[data-portfolio-fonts]');
     if (!existing) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.setAttribute('data-portfolio-fonts', 'true');
-      link.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Serif+Display&display=swap';
+      link.href = 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&display=swap';
       document.head.appendChild(link);
     }
-
-    // Inject local Blackletter font
     const existingFont = document.querySelector('style[data-blackletter]');
     if (!existingFont) {
       const style = document.createElement('style');
@@ -1979,20 +2415,32 @@ export default function App() {
       `;
       document.head.appendChild(style);
     }
-
     document.documentElement.style.scrollBehavior = 'smooth';
     document.body.style.margin = '0';
     document.body.style.padding = '0';
     document.body.style.background = COLORS.bg;
     document.body.style.overflowX = 'hidden';
+    return () => { document.documentElement.style.scrollBehavior = ''; };
+  }, []);
+}
 
-    return () => {
-      document.documentElement.style.scrollBehavior = '';
-    };
+function HomePage() {
+  useGlobalSetup();
+  const [showSplash, setShowSplash] = useState(
+    () => !sessionStorage.getItem('splashSeen')
+  );
+  const [splashDone, setSplashDone] = useState(
+    () => !!sessionStorage.getItem('splashSeen')
+  );
+  const handleSplashDone = useCallback(() => {
+    sessionStorage.setItem('splashSeen', 'true');
+    setShowSplash(false);
+    setSplashDone(true);
   }, []);
 
   return (
     <>
+      <StarCursor />
       {showSplash && <SplashScreen onDone={handleSplashDone} />}
       <div style={{
         background: COLORS.bg,
@@ -2003,10 +2451,34 @@ export default function App() {
         <Hero />
         <WorkSection />
         <DigestsSection />
-        <CabinetSection />
         <SandboxSection />
         <ContactSection />
       </div>
     </>
+  );
+}
+
+function AboutPage() {
+  useGlobalSetup();
+  return (
+    <>
+      <StarCursor />
+      <div style={{ background: COLORS.bg, minHeight: '100vh' }}>
+        <Nav />
+        <CabinetSection />
+        <ContactSection />
+      </div>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

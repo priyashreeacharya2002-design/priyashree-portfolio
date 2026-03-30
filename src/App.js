@@ -2391,6 +2391,12 @@ function StarCursor() {
   );
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 function useGlobalSetup() {
   useEffect(() => {
     const existing = document.querySelector('link[data-portfolio-fonts]');
@@ -2475,6 +2481,7 @@ function AboutPage() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />

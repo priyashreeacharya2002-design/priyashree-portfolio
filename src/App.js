@@ -68,10 +68,10 @@ const THINKER_ASCII = `
    \\........................../ `;
 
 const ROTATING_WORDS = [
-  'ideas',
-  'questions',
-  'systems',
-  'experiences',
+  'idea',
+  'question',
+  'system',
+  'experience',
   'design',
 ];
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import CarbonCountPage from './CarbonCountPage';
 import * as THREE from 'three';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -2562,6 +2563,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/work/carbon-count" element={<CarbonCountPage />} />
       </Routes>
     </BrowserRouter>
   );

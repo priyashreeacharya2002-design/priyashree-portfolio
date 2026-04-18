@@ -1,4 +1,12 @@
 @font-face {
+  font-family: 'Dashing';
+  src: url('./Dashing-PersonalUse.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Apple Garamond';
   src: url('/AppleGaramond.ttf') format('truetype');
   font-weight: 400;

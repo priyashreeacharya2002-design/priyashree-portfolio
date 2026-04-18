@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import CarbonCountPage from './CarbonCountPage';
+import ParadyesPage from './ParadyesPage';
 import * as THREE from 'three';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -97,7 +98,7 @@ const PROJECTS = [
     color: '#131210',
     accent: '#6B5B4E',
     image: '/carbon-counts.png',
-    url: 'https://priyashreeacharya.myportfolio.com/carbon-count-retail-technology',
+    url: '/work/carbon-count',
   },
   {
     id: 'paradyes',
@@ -108,7 +109,7 @@ const PROJECTS = [
     color: '#111009',
     accent: '#7A6B5A',
     image: '/paradyes.png',
-    url: 'https://priyashreeacharya.myportfolio.com/something-1',
+    url: '/work/paradyes',
   },
   {
     id: 'ember',
@@ -365,152 +366,6 @@ function NavLink({ link, isHovered, onHover, onLeave, onClick }) {
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
 
-const HAND_RAMP = [' ',' ',' ','.','.','.',',',',','`',"'",'`',',',':',';','+','i','!','t','f','l','J','C','Y','X','Z','O','0','w','M','W','B','#','$','@'];
-
-function indicesToText(cur, cols, rows) {
-  const lines = [];
-  for (let r = 0; r < rows; r++) {
-    let line = '';
-    for (let c = 0; c < cols; c++) line += HAND_RAMP[cur[r * cols + c]];
-    lines.push(line);
-  }
-  return lines.join('\n');
-}
-
-function CreationOfAdamBg() {
-  const [leftDisplay, setLeftDisplay] = useState('');
-  const [rightDisplay, setRightDisplay] = useState('');
-  const lRef = useRef(null); // { base, cur, cols, rows }
-  const rRef = useRef(null);
-
-  useEffect(() => {
-    const charW = 5.5, charH = 10.35;
-    const targetH = window.innerHeight * 0.677;
-
-    function loadHand(src) {
-      return new Promise(resolve => {
-        const img = new Image();
-        img.onload = () => {
-          const natW = img.naturalWidth, natH = img.naturalHeight;
-          const rows = Math.floor(targetH / charH);
-          const cols = Math.floor(rows * (natW / natH) * (charH / charW));
-          const off = document.createElement('canvas');
-          off.width = natW * 2; off.height = natH * 2;
-          const ctx = off.getContext('2d');
-          ctx.drawImage(img, 0, 0, off.width, off.height);
-          const data = ctx.getImageData(0, 0, off.width, off.height).data;
-          const iw = off.width, ih = off.height;
-          const sx = iw / cols, sy = ih / rows;
-          const base = new Uint8Array(cols * rows);
-          for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-              let rS=0,gS=0,bS=0,n=0;
-              for (let dy=0;dy<3;dy++) for (let dx=0;dx<3;dx++) {
-                const px=Math.min(Math.floor(col*sx)+dx,iw-1);
-                const py=Math.min(Math.floor(row*sy)+dy,ih-1);
-                const i=(py*iw+px)*4;
-                rS+=data[i];gS+=data[i+1];bS+=data[i+2];n++;
-              }
-              const lum=rS/n*0.299+gS/n*0.587+bS/n*0.114;
-              if (lum>242) { base[row*cols+col]=0; }
-              else {
-                const d=(242-lum)/242;
-                const t=d<0.5?2*d*d:1-Math.pow(-2*d+2,2)/2;
-                base[row*cols+col]=Math.max(1,Math.min(HAND_RAMP.length-1,Math.floor(Math.pow(t,0.55)*(HAND_RAMP.length-1))));
-              }
-            }
-          }
-          resolve({ base, cur: new Uint8Array(base), cols, rows });
-        };
-        img.src = src;
-      });
-    }
-
-    let interval;
-    Promise.all([loadHand('/leftside.png'), loadHand('/rightside.png')])
-      .then(([left, right]) => {
-        lRef.current = left;
-        rRef.current = right;
-        setLeftDisplay(indicesToText(left.cur, left.cols, left.rows));
-        setRightDisplay(indicesToText(right.cur, right.cols, right.rows));
-
-        // Character morphing: each tick, ~2% of visible chars step ±1 in the ramp,
-        // with a pull back toward their original value so they shimmer in place.
-        interval = setInterval(() => {
-          [lRef, rRef].forEach((ref, side) => {
-            const d = ref.current;
-            if (!d) return;
-            const { base, cur, cols, rows } = d;
-            const total = cols * rows;
-            const changes = Math.floor(total * 0.02);
-            for (let i = 0; i < changes; i++) {
-              const pos = Math.floor(Math.random() * total);
-              if (base[pos] === 0) continue; // skip background
-              const diff = cur[pos] - base[pos];
-              // Weight toward returning to base; allow ±3 drift max
-              const r = Math.random();
-              if (Math.abs(diff) >= 3) {
-                // Force step back toward base
-                cur[pos] += diff > 0 ? -1 : 1;
-              } else if (r < 0.45) {
-                // Pull toward base
-                if (diff !== 0) cur[pos] += diff > 0 ? -1 : 1;
-              } else if (r < 0.70) {
-                // Drift away from base
-                const step = Math.random() < 0.5 ? 1 : -1;
-                const next = cur[pos] + step;
-                if (next >= 1 && next < HAND_RAMP.length) cur[pos] = next;
-              }
-              // else ~30%: stay unchanged
-            }
-            const text = indicesToText(cur, cols, rows);
-            if (side === 0) setLeftDisplay(text);
-            else setRightDisplay(text);
-          });
-        }, 110);
-      });
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const base = {
-    position: 'absolute',
-    top: '50%',
-    margin: 0, padding: 0,
-    fontFamily: 'monospace',
-    fontSize: '9px',
-    lineHeight: '1.15',
-    color: 'rgba(255,255,255,0.32)',
-    overflow: 'hidden',
-    whiteSpace: 'pre',
-    pointerEvents: 'none',
-    userSelect: 'none',
-    zIndex: 0,
-  };
-
-  return (
-    <>
-      <style>{`
-        @keyframes reachRight {
-          0%,100% { transform: translateY(-50%) translateX(0px);   opacity: 0.85; }
-          50%      { transform: translateY(-50%) translateX(48px);  opacity: 1;    }
-        }
-        @keyframes reachLeft {
-          0%,100% { transform: translateY(-50%) translateX(0px);   opacity: 0.85; }
-          50%      { transform: translateY(-50%) translateX(-48px); opacity: 1;    }
-        }
-      `}</style>
-      <pre className="adam-ascii-bg" style={{
-        ...base, left: '-48px',
-        animation: 'reachRight 10s ease-in-out infinite',
-      }}>{leftDisplay}</pre>
-      <pre className="adam-ascii-bg" style={{
-        ...base, right: '-48px',
-        animation: 'reachLeft 10s ease-in-out infinite',
-      }}>{rightDisplay}</pre>
-    </>
-  );
-}
 
 function PrismBg() {
   const canvasRef = useRef(null);
@@ -629,6 +484,9 @@ function PrismBg() {
     let mx = W * 0.35, my = H * 0.42;
     let rayAlpha = 0;
     let animFrame;
+    let isVisible = true;
+    const visObs = new IntersectionObserver(([e]) => { isVisible = e.isIntersecting; }, { threshold: 0 });
+    visObs.observe(canvas);
 
     const onMove = e => {
       const r = canvas.getBoundingClientRect();
@@ -650,19 +508,10 @@ function PrismBg() {
       if (!isFinite(ox)||!isFinite(oy)||!isFinite(tx)||!isFinite(ty)) return;
       const dx=tx-ox, dy=ty-oy;
       const angle=Math.atan2(dy,dx);
-      const N=80;
+      const N=35;
       ctx.save();
       ctx.globalCompositeOperation='screen';
-      ctx.save();
-      ctx.translate(ox,oy); ctx.rotate(angle); ctx.scale(1, 200/300);
-      const srcGrd=ctx.createRadialGradient(0,0,0, 0,0,300);
-      srcGrd.addColorStop(0,'rgba(255,255,255,0.12)');
-      srcGrd.addColorStop(1,'rgba(255,255,255,0)');
-      ctx.beginPath(); ctx.arc(0,0,300,0,Math.PI*2);
-      ctx.fillStyle=srcGrd; ctx.fill();
-      ctx.restore();
       const passes=[
-        [110, 45,  0.012],
         [ 50, 20,  0.025],
         [ 14,  5,  0.09 ],
       ];
@@ -726,9 +575,7 @@ function PrismBg() {
       const fx = ex + ca*reach, fy = ey + sa*reach;
       const nearHW = 4, farHW = 48;
       const passes = [
-        [0.04,  0.01, 180],
         [0.10,  0.02, 100],
-        [0.35,  0.07,  60],
         [0.40,  0.10,  60],
       ];
       passes.forEach(([a0, a1, sBl]) => {
@@ -751,8 +598,11 @@ function PrismBg() {
       });
     }
 
-    function tick() {
+    let lastTs = 0;
+    function tick(ts) {
       animFrame = requestAnimationFrame(tick);
+      if (!isVisible || ts - lastTs < 33) return; // pause off-screen, cap to ~30 fps
+      lastTs = ts;
       ctx.clearRect(0,0,W,H);
 
       const pcx = W * 0.63, pcy = H * 0.30;
@@ -861,6 +711,7 @@ function PrismBg() {
       cancelAnimationFrame(animFrame);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('resize', onResize);
+      visObs.disconnect();
       renderer.dispose();
     };
   }, []);
@@ -868,7 +719,7 @@ function PrismBg() {
   return (
     <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:0,
       display: window.innerWidth < 768 ? 'none' : 'block'}}>
-      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',filter:'blur(4px)'}}/>
+      <canvas ref={canvasRef} style={{position:'absolute',inset:0,width:'100%',height:'100%',filter:'blur(4px)',willChange:'transform'}}/>
       <canvas ref={threeRef} width={320} height={320} style={{
         position:'absolute',
         left:'63%', top:'30%',
@@ -1251,12 +1102,15 @@ function WorkSection() {
 
 function ProjectCard({ project, delay, visible }) {
   const [hovered, setHovered] = useState(false);
+  const navigate = useNavigate();
+  const isInternal = project.url.startsWith('/');
 
   return (
     <a
       href={project.url}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={isInternal ? '_self' : '_blank'}
+      rel={isInternal ? undefined : 'noopener noreferrer'}
+      onClick={isInternal ? (e) => { e.preventDefault(); navigate(project.url); } : undefined}
       style={{
         ...fadeUp(visible, delay),
         background: hovered ? COLORS.surface : COLORS.bg,
@@ -1285,7 +1139,7 @@ function ProjectCard({ project, delay, visible }) {
         justifyContent: 'center',
       }}>
         {project.image ? (
-          <img src={project.image} alt={project.name} style={{
+          <img src={project.image} alt={project.name} loading="lazy" style={{
             width: '100%', height: '100%',
             objectFit: 'cover', objectPosition: 'center', display: 'block',
             filter: hovered ? 'grayscale(0%)' : 'grayscale(100%)',
@@ -1440,7 +1294,7 @@ function DigestCard({ article, delay, visible }) {
         overflow: 'hidden',
       }}>
         {article.image ? (
-          <img src={article.image} alt={article.title} style={{
+          <img src={article.image} alt={article.title} loading="lazy" style={{
             width: '100%', height: '100%', objectFit: 'cover',
           }} />
         ) : (
@@ -1701,6 +1555,7 @@ function CabinetSection() {
             <img
               src="/Priyashreeweb.png"
               alt="Priyashree Acharya"
+              loading="lazy"
               style={{
                 width: '80%',
                 borderRadius: '8px',
@@ -1980,15 +1835,13 @@ function SandboxCard({ exp, delay, visible }) {
   const [perimeter, setPerimeter] = useState(0);
 
   useEffect(() => {
-    const measure = () => {
-      if (cardRef.current) {
-        const { offsetWidth: w, offsetHeight: h } = cardRef.current;
-        setPerimeter(2 * (w + h));
-      }
-    };
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+    if (!cardRef.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width: w, height: h } = entry.contentRect;
+      setPerimeter(2 * (w + h));
+    });
+    ro.observe(cardRef.current);
+    return () => ro.disconnect();
   }, []);
 
   return (
@@ -2564,6 +2417,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/work/carbon-count" element={<CarbonCountPage />} />
+        <Route path="/work/paradyes" element={<ParadyesPage />} />
       </Routes>
     </BrowserRouter>
   );

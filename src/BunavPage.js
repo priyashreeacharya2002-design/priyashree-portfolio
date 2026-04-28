@@ -1003,41 +1003,40 @@ function InformationArchitectureSection() {
   const fi     = "'Inter', sans-serif";
   const sw     = 1.2;
 
-  const Box = ({ cx, cy, w = 115, h = 34, fs = 11.5, children }) => (
+  // Rectangle node
+  const Box = ({ cx, cy, w = 115, h = 34, fs = 11.5, label }) => (
     <g>
-      <rect x={cx - w/2} y={cy - h/2} width={w} height={h} rx={2}
-        fill="white" stroke={dark} strokeWidth={sw} />
-      <text x={cx} y={cy} fontFamily={fi} fontSize={fs} fill={dark}
-        textAnchor="middle" dominantBaseline="middle">{children}</text>
+      <rect x={cx-w/2} y={cy-h/2} width={w} height={h} rx={2} fill="white" stroke={dark} strokeWidth={sw}/>
+      <text x={cx} y={cy} fontFamily={fi} fontSize={fs} fill={dark} textAnchor="middle" dominantBaseline="middle">{label}</text>
+    </g>
+  );
+  // Two-line box
+  const Box2 = ({ cx, cy, w = 130, h = 38, fs = 11, line1, line2 }) => (
+    <g>
+      <rect x={cx-w/2} y={cy-h/2} width={w} height={h} rx={2} fill="white" stroke={dark} strokeWidth={sw}/>
+      <text fontFamily={fi} fontSize={fs} fill={dark} textAnchor="middle">
+        <tspan x={cx} y={cy-7}>{line1}</tspan>
+        <tspan x={cx} dy="14">{line2}</tspan>
+      </text>
+    </g>
+  );
+  // Diamond decision
+  const Dia = ({ cx, cy, w = 132, h = 54, fs = 11, label }) => (
+    <g>
+      <polygon points={`${cx},${cy-h/2} ${cx+w/2},${cy} ${cx},${cy+h/2} ${cx-w/2},${cy}`} fill="white" stroke={dark} strokeWidth={sw}/>
+      <text x={cx} y={cy} fontFamily={fi} fontSize={fs} fill={dark} textAnchor="middle" dominantBaseline="middle">{label}</text>
+    </g>
+  );
+  // Parallelogram (input/output shape)
+  const Par = ({ cx, cy, w = 115, h = 33, sk = 10, fs = 11, label }) => (
+    <g>
+      <polygon points={`${cx-w/2+sk},${cy-h/2} ${cx+w/2+sk},${cy-h/2} ${cx+w/2-sk},${cy+h/2} ${cx-w/2-sk},${cy+h/2}`} fill="white" stroke={dark} strokeWidth={sw}/>
+      <text x={cx} y={cy} fontFamily={fi} fontSize={fs} fill={dark} textAnchor="middle" dominantBaseline="middle">{label}</text>
     </g>
   );
 
-  const Dia = ({ cx, cy, w = 130, h = 52, fs = 11, children }) => (
-    <g>
-      <polygon
-        points={`${cx},${cy - h/2} ${cx + w/2},${cy} ${cx},${cy + h/2} ${cx - w/2},${cy}`}
-        fill="white" stroke={dark} strokeWidth={sw} />
-      <text x={cx} y={cy} fontFamily={fi} fontSize={fs} fill={dark}
-        textAnchor="middle" dominantBaseline="middle">{children}</text>
-    </g>
-  );
-
-  const Par = ({ cx, cy, w = 115, h = 33, sk = 10, fs = 11, children }) => (
-    <g>
-      <polygon
-        points={`${cx - w/2 + sk},${cy - h/2} ${cx + w/2 + sk},${cy - h/2} ${cx + w/2 - sk},${cy + h/2} ${cx - w/2 - sk},${cy + h/2}`}
-        fill="white" stroke={dark} strokeWidth={sw} />
-      <text x={cx} y={cy} fontFamily={fi} fontSize={fs} fill={dark}
-        textAnchor="middle" dominantBaseline="middle">{children}</text>
-    </g>
-  );
-
-  const Arr = ({ x1, y1, x2, y2 }) => (
-    <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={dark} strokeWidth={sw} markerEnd="url(#ia-ah)" />
-  );
-  const Ln = ({ x1, y1, x2, y2 }) => (
-    <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={dark} strokeWidth={sw} />
-  );
+  const Arr = ({ x1, y1, x2, y2 }) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={dark} strokeWidth={sw} markerEnd="url(#ia-ah)"/>;
+  const Ln  = ({ x1, y1, x2, y2 }) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={dark} strokeWidth={sw}/>;
 
   const desc = [
     "The app centers on the parent's inner child, using",
@@ -1051,160 +1050,141 @@ function InformationArchitectureSection() {
 
   return (
     <section style={{ background: bg, fontFamily: fi }}>
-      <div style={{ height: '8px', background: orange }} />
+      <div style={{ height: '8px', background: orange }}/>
       <div style={{ padding: '28px 72px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: '13px', color: grey, fontWeight: 400 }}>User Flow</span>
         <span style={{ fontFamily: "'Mukta',sans-serif", fontSize: '20px', fontWeight: 700, color: dark }}>बुनाव</span>
       </div>
       <div style={{ padding: '36px 72px 0' }}>
-        <h2 style={{ fontFamily: FI, fontWeight: 700, fontSize: 'clamp(28px,3vw,48px)', color: dark, margin: 0, letterSpacing: '-0.01em' }}>
+        <h2 style={{ fontFamily: FI, fontWeight: 400, fontSize: 'clamp(28px,3vw,48px)', color: dark, margin: 0, letterSpacing: '-0.01em' }}>
           Information Architecture
         </h2>
       </div>
 
       <div style={{ padding: '32px 72px 64px' }}>
-        <svg viewBox="0 0 1220 510" style={{ width: '100%', height: 'auto', display: 'block' }}>
+        <svg viewBox="0 0 1200 570" style={{ width: '100%', height: 'auto', display: 'block' }}>
           <defs>
             <marker id="ia-ah" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,1 L5,3 L0,5 Z" fill={dark} />
+              <path d="M0,1 L5,3 L0,5 Z" fill={dark}/>
             </marker>
           </defs>
 
-          {/* ── Description text (lower-left) ── */}
-          {desc.map((line, i) => (
-            <text key={i} x={52} y={282 + i * 19} fontFamily={fi} fontSize={12} fill={grey}>{line}</text>
-          ))}
-
           {/* ── Explore / Profile / General (above Homepage) ── */}
-          <Box cx={622} cy={34} w={82} h={28}>Explore</Box>
-          <Box cx={718} cy={34} w={72} h={28}>Profile</Box>
-          <Box cx={812} cy={34} w={72} h={28}>General</Box>
-          <Ln x1={622} y1={48} x2={622} y2={63} />
-          <Ln x1={718} y1={48} x2={718} y2={63} />
-          <Ln x1={812} y1={48} x2={812} y2={63} />
-          <Ln x1={622} y1={63} x2={812} y2={63} />
-          <Ln x1={670} y1={63} x2={670} y2={83} />
+          <Box cx={698} cy={34} w={85} h={28} label="Explore"/>
+          <Box cx={796} cy={34} w={75} h={28} label="Profile"/>
+          <Box cx={890} cy={34} w={75} h={28} label="General"/>
+          <Ln x1={698} y1={48} x2={698} y2={62}/>
+          <Ln x1={796} y1={48} x2={796} y2={62}/>
+          <Ln x1={890} y1={48} x2={890} y2={62}/>
+          <Ln x1={698} y1={62} x2={890} y2={62}/>
+          <Ln x1={748} y1={62} x2={748} y2={83}/>
 
           {/* ── Main horizontal row ── */}
-          <Box cx={222} cy={100} w={112} h={34}>Splash screen</Box>
-          <Box cx={360} cy={100} w={112} h={34}>About the app</Box>
-          <Box cx={498} cy={100} w={112} h={34}>Sign up/Login</Box>
-          <Box cx={670} cy={100} w={100} h={34}>Homepage</Box>
-          <Box cx={808} cy={100} w={90} h={34}>Prompt</Box>
+          <Box cx={300} cy={100} w={112} h={34} label="Splash screen"/>
+          <Box cx={440} cy={100} w={112} h={34} label="About the app"/>
+          <Box cx={580} cy={100} w={112} h={34} label="Sign up/Login"/>
+          <Box cx={748} cy={100} w={100} h={34} label="Homepage"/>
+          <Box cx={892} cy={100} w={90}  h={34} label="Prompt"/>
 
-          <Arr x1={278} y1={100} x2={304} y2={100} />
-          <Arr x1={416} y1={100} x2={442} y2={100} />
-          <Arr x1={554} y1={100} x2={620} y2={100} />
-          <Arr x1={720} y1={100} x2={763} y2={100} />
+          <Arr x1={356} y1={100} x2={384} y2={100}/>
+          <Arr x1={496} y1={100} x2={524} y2={100}/>
+          <Arr x1={636} y1={100} x2={698} y2={100}/>
+          <Arr x1={798} y1={100} x2={847} y2={100}/>
 
           {/* Prompt → Can parent recall? */}
-          <Arr x1={808} y1={117} x2={808} y2={154} />
+          <Arr x1={892} y1={117} x2={892} y2={154}/>
 
           {/* ── Can parent recall? (diamond) ── */}
-          <Dia cx={808} cy={182} w={130} h={52}>Can parent recall?</Dia>
+          <Dia cx={892} cy={182} w={132} h={54} label="Can parent recall?"/>
 
           {/* Left → Can't Recall (No) */}
-          <Arr x1={743} y1={182} x2={692} y2={182} />
-          <Par cx={630} cy={182} w={118} h={33} sk={10}>Can't Recall (No)</Par>
+          <Arr x1={826} y1={182} x2={774} y2={182}/>
+          <Par cx={710} cy={182} w={120} h={33} sk={10} label="Can't Recall (No)"/>
           {/* Can't Recall → Change Prompt */}
-          <Ln x1={630} y1={199} x2={630} y2={224} />
-          <Ln x1={630} y1={224} x2={558} y2={224} />
-          <Arr x1={558} y1={224} x2={558} y2={238} />
-          <Box cx={540} cy={255} w={118} h={34}>Change Prompt</Box>
+          <Ln x1={710} y1={199} x2={710} y2={226}/>
+          <Ln x1={710} y1={226} x2={576} y2={226}/>
+          <Arr x1={576} y1={226} x2={576} y2={240}/>
+          <Box cx={558} cy={257} w={118} h={34} label="Change Prompt"/>
 
-          {/* Yes → Add Memory */}
-          <Arr x1={808} y1={208} x2={782} y2={238} />
-          <Box cx={764} cy={255} w={105} h={34}>Add Memory</Box>
+          {/* Yes ↓ → Add Memory */}
+          <Arr x1={892} y1={209} x2={868} y2={240}/>
+          <Par cx={850} cy={257} w={108} h={34} sk={10} label="Add Memory"/>
 
           {/* Add Memory → Add Photo */}
-          <Arr x1={817} y1={247} x2={856} y2={236} />
-          <Par cx={896} cy={232} w={88} h={28} sk={8}>Add Photo</Par>
+          <Arr x1={904} y1={248} x2={946} y2={238}/>
+          <Par cx={988} cy={234} w={88} h={28} sk={8} label="Add Photo"/>
 
           {/* Add Memory → Audio */}
-          <Arr x1={817} y1={264} x2={856} y2={269} />
-          <Par cx={892} cy={269} w={72} h={28} sk={8}>Audio</Par>
+          <Arr x1={904} y1={266} x2={946} y2={272}/>
+          <Par cx={982} cy={272} w={72} h={28} sk={8} label="Audio"/>
 
-          {/* Add Memory → Re-weave */}
-          <Arr x1={764} y1={272} x2={764} y2={308} />
-          <Box cx={764} cy={325} w={158} h={34}>Re-weave this Memory</Box>
+          {/* Add Memory → Re-weave this Memory */}
+          <Arr x1={850} y1={274} x2={850} y2={310}/>
+          <Box cx={850} cy={327} w={160} h={34} label="Re-weave this Memory"/>
 
-          {/* Re-weave → activity row via bar */}
-          <Ln x1={764} y1={342} x2={764} y2={372} />
-          <Ln x1={430} y1={372} x2={950} y2={372} />
-          <Arr x1={430} y1={372} x2={430} y2={378} />
-          <Arr x1={620} y1={372} x2={620} y2={378} />
-          <Arr x1={764} y1={372} x2={764} y2={378} />
-          <Arr x1={950} y1={372} x2={950} y2={378} />
+          {/* Re-weave → Activity Suggestion (straight down, aligned) */}
+          <Arr x1={850} y1={344} x2={850} y2={382}/>
 
-          {/* ── Activity row ── */}
-          <Par cx={372} cy={395} w={122} h={34} sk={10}>Parent Feedback</Par>
-          <Box cx={558} cy={395} w={140} h={34}>Activity Experience</Box>
-          <Box cx={764} cy={395} w={142} h={34}>Activity Suggestion</Box>
-          <Box cx={950} cy={395} w={125} h={34}>How it will Help</Box>
+          {/* ── Activity row (y=400) ── */}
+          {/* horizontal connector bar behind the row */}
+          <Ln x1={510} y1={400} x2={640} y2={400}/>  {/* ParentFeedback right → ActivityExp left */}
+          <Ln x1={780} y1={400} x2={924} y2={400}/>  {/* ActivitySugg right → HowItHelps left */}
 
-          {/* Activity Experience ↔ Parent Feedback */}
-          <Arr x1={488} y1={391} x2={444} y2={391} />
-          <Arr x1={444} y1={399} x2={488} y2={399} />
+          <Par cx={452} cy={400} w={120} h={34} sk={10} label="Parent Feedback"/>
+          <Box cx={710} cy={400} w={140} h={34} label="Activity Experience"/>
+          <Box cx={850} cy={400} w={140} h={34} label="Activity Suggestion"/>
+          <Box cx={1000} cy={400} w={126} h={34} label="How it will Help"/>
 
-          {/* Activity Suggestion → How it will Help */}
-          <Arr x1={835} y1={395} x2={888} y2={395} />
+          {/* Activity Experience ↔ Parent Feedback (bidirectional) */}
+          <Arr x1={640} y1={396} x2={514} y2={396}/>
+          <Arr x1={514} y1={404} x2={640} y2={404}/>
+
+          {/* Activity Suggestion → Activity Experience */}
+          <Arr x1={780} y1={400} x2={780} y2={400}/>
 
           {/* How it will Help → Skills */}
-          <Ln x1={1013} y1={384} x2={1048} y2={368} />
-          <Arr x1={1048} y1={368} x2={1052} y2={368} />
-          <Box cx={1118} cy={363} w={118} h={30}>Cognitive Skills</Box>
+          <Ln x1={1063} y1={388} x2={1096} y2={372}/>
+          <Arr x1={1096} y1={372} x2={1100} y2={372}/>
+          <Box cx={1158} cy={367} w={118} h={30} label="Cognitive Skills"/>
 
-          <Arr x1={1013} y1={395} x2={1052} y2={395} />
-          <Box cx={1118} cy={395} w={95} h={30}>Motor Skills</Box>
+          <Arr x1={1063} y1={400} x2={1100} y2={400}/>
+          <Box cx={1158} cy={400} w={95}  h={30} label="Motor Skills"/>
 
-          <Ln x1={1013} y1={406} x2={1048} y2={422} />
-          <Arr x1={1048} y1={422} x2={1052} y2={422} />
-          <Box cx={1122} cy={427} w={148} h={30}>Socio-Emotional Skills</Box>
+          <Ln x1={1063} y1={412} x2={1096} y2={428}/>
+          <Arr x1={1096} y1={428} x2={1100} y2={428}/>
+          <Box cx={1162} cy={433} w={148} h={30} label="Socio-Emotional Skills"/>
 
-          {/* Activity Experience → Do / Skip */}
-          <Ln x1={558} y1={412} x2={558} y2={443} />
-          <Ln x1={558} y1={443} x2={764} y2={443} />
-          <Ln x1={558} y1={443} x2={558} y2={447} />
-          <Par cx={558} cy={459} w={60} h={28} sk={8}>Do</Par>
-          <Ln x1={764} y1={443} x2={764} y2={447} />
-          <Par cx={764} cy={459} w={60} h={28} sk={8}>Skip</Par>
+          {/* Activity Experience + Activity Suggestion → Do / Skip */}
+          <Ln x1={710} y1={417} x2={710} y2={448}/>
+          <Par cx={710} cy={460} w={62} h={28} sk={8} label="Do"/>
+          <Ln x1={850} y1={417} x2={850} y2={448}/>
+          <Par cx={850} cy={460} w={62} h={28} sk={8} label="Skip"/>
 
           {/* Parent Feedback → Did Child Participate? */}
-          <Arr x1={372} y1={412} x2={396} y2={450} />
-          <Dia cx={408} cy={478} w={138} h={52}>Did Child Participate?</Dia>
+          <Arr x1={452} y1={417} x2={452} y2={480}/>
+          <Dia cx={452} cy={508} w={140} h={54} label="Did Child Participate?"/>
 
           {/* Did Child Participate? → Supportive Suggestion (No) */}
-          <Arr x1={477} y1={466} x2={520} y2={458} />
-          <rect x={529} y={441} width={170} height={30} rx={2} fill="white" stroke={dark} strokeWidth={sw} />
-          <text x={614} y={448} fontFamily={fi} fontSize={11} fill={dark} textAnchor="middle">
-            <tspan x={614} dy="0">Supportive Suggestion</tspan>
-            <tspan x={614} dy="13">(No)</tspan>
-          </text>
+          <Arr x1={522} y1={496} x2={568} y2={489}/>
+          <Box2 cx={660} cy={488} w={158} h={38} line1="Supportive Suggestion" line2="(No)"/>
 
           {/* Did Child Participate? → Reflection & Observation (Yes) */}
-          <Arr x1={477} y1={490} x2={520} y2={498} />
-          <rect x={532} y={483} width={178} height={30} rx={2} fill="white" stroke={dark} strokeWidth={sw} />
-          <text x={621} y={490} fontFamily={fi} fontSize={11} fill={dark} textAnchor="middle">
-            <tspan x={621} dy="0">Reflection &amp; Observation</tspan>
-            <tspan x={621} dy="13">(Yes)</tspan>
-          </text>
+          <Arr x1={522} y1={520} x2={568} y2={528}/>
+          <Box2 cx={664} cy={528} w={165} h={38} line1="Reflection &amp; Observation" line2="(Yes)"/>
 
           {/* Both → Smart Suggestions */}
-          <Arr x1={710} y1={456} x2={744} y2={468} />
-          <Arr x1={710} y1={498} x2={744} y2={484} />
-          <rect x={751} y={459} width={178} height={34} rx={2} fill="white" stroke={dark} strokeWidth={sw} />
-          <text x={840} y={466} fontFamily={fi} fontSize={10.5} fill={dark} textAnchor="middle">
-            <tspan x={840} dy="0">Smart Suggestions for</tspan>
-            <tspan x={840} dy="13">next activity</tspan>
-          </text>
+          <Arr x1={739} y1={488} x2={780} y2={502}/>
+          <Arr x1={747} y1={528} x2={780} y2={516}/>
+          <Box2 cx={866} cy={510} w={172} h={38} line1="Smart Suggestions for" line2="next activity"/>
 
-          {/* Smart Suggestions → Loop */}
-          <Arr x1={929} y1={476} x2={960} y2={476} />
-          <rect x={960} y={459} width={168} height={34} rx={2} fill="white" stroke={dark} strokeWidth={sw} />
-          <text x={1044} y={466} fontFamily={fi} fontSize={10.5} fill={dark} textAnchor="middle">
-            <tspan x={1044} dy="0">Loop resets back to</tspan>
-            <tspan x={1044} dy="13">Homepage</tspan>
-          </text>
+          {/* Smart Suggestions → Loop resets */}
+          <Arr x1={952} y1={510} x2={984} y2={510}/>
+          <Box2 cx={1075} cy={510} w={165} h={38} line1="Loop resets back to" line2="Homepage"/>
+
+          {/* ── Description text (lower-left, clear of nodes) ── */}
+          {desc.map((line, i) => (
+            <text key={i} x={52} y={310 + i * 19} fontFamily={fi} fontSize={12} fill={grey}>{line}</text>
+          ))}
         </svg>
       </div>
     </section>

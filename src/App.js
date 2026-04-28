@@ -509,11 +509,10 @@ function PrismBg() {
       if (!isFinite(ox)||!isFinite(oy)||!isFinite(tx)||!isFinite(ty)) return;
       const dx=tx-ox, dy=ty-oy;
       const angle=Math.atan2(dy,dx);
-      const N=35;
+      const N=18;
       ctx.save();
       ctx.globalCompositeOperation='screen';
       const passes=[
-        [ 50, 20,  0.025],
         [ 14,  5,  0.09 ],
       ];
       passes.forEach(([rl, rp, alpha]) => {
@@ -545,7 +544,7 @@ function PrismBg() {
     function drawSparkle(sx,sy) {
       const long=10, short=1.5;
       ctx.save();
-      ctx.shadowBlur=50; ctx.shadowColor='white'; ctx.fillStyle='#ffffff';
+      ctx.fillStyle='#ffffff';
       ctx.beginPath();
       for (let i=0;i<8;i++) {
         const a=i*Math.PI/4 - Math.PI/2;
@@ -576,17 +575,15 @@ function PrismBg() {
       const fx = ex + ca*reach, fy = ey + sa*reach;
       const nearHW = 4, farHW = 48;
       const passes = [
-        [0.10,  0.02, 100],
-        [0.40,  0.10,  60],
+        [0.10,  0.02],
+        [0.40,  0.10],
       ];
-      passes.forEach(([a0, a1, sBl]) => {
+      passes.forEach(([a0, a1]) => {
         const grd = ctx.createLinearGradient(ex, ey, fx, fy);
         grd.addColorStop(0, `rgba(${r},${g},${b},${a0})`);
         grd.addColorStop(1, `rgba(${r},${g},${b},${a1})`);
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
-        ctx.shadowBlur  = sBl;
-        ctx.shadowColor = `rgb(${r},${g},${b})`;
         ctx.beginPath();
         ctx.moveTo(ex + px*nearHW, ey + py*nearHW);
         ctx.lineTo(ex - px*nearHW, ey - py*nearHW);
@@ -682,7 +679,6 @@ function PrismBg() {
           hslGrd.addColorStop(1,    'hsla(0,100%,50%,0.15)');
           ctx.save();
           ctx.globalCompositeOperation = 'screen';
-          ctx.shadowBlur = 60; ctx.shadowColor = 'white';
           ctx.beginPath();
           ctx.moveTo(ex, ey - 3); ctx.lineTo(ex, ey + 3);
           ctx.lineTo(fxB, fyB);   ctx.lineTo(fxT, fyT);
@@ -695,7 +691,7 @@ function PrismBg() {
         ctx.save();
         ctx.beginPath(); ctx.arc(ex,ey,3.5,0,Math.PI*2);
         ctx.fillStyle='rgba(255,255,255,0.95)';
-        ctx.shadowBlur=16; ctx.shadowColor='white'; ctx.fill();
+        ctx.fill();
         ctx.restore();
       }
 
@@ -2273,8 +2269,7 @@ function StarCursor() {
       pos.current = { x: e.clientX, y: e.clientY };
       if (!rafRef.current) {
         rafRef.current = requestAnimationFrame(() => {
-          el.style.left = pos.current.x + 'px';
-          el.style.top  = pos.current.y + 'px';
+          el.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px) translate(-50%, -50%) rotate(-20deg)`;
           rafRef.current = null;
         });
       }
@@ -2314,11 +2309,12 @@ function StarCursor() {
       zIndex: 99999,
       fontSize: '18px',
       color: '#ffffff',
-      transform: 'translate(-50%, -50%) rotate(-20deg)',
+      transform: 'translate(-100px, -100px) translate(-50%, -50%) rotate(-20deg)',
       userSelect: 'none',
       lineHeight: 1,
-      left: '-100px',
-      top: '-100px',
+      left: 0,
+      top: 0,
+      willChange: 'transform',
     }}>✦</div>
   );
 }

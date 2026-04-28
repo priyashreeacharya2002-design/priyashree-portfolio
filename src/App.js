@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import CarbonCountPage from './CarbonCountPage';
 import ParadyesPage from './ParadyesPage';
+import BunavPage from './BunavPage';
 import * as THREE from 'three';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -87,7 +88,7 @@ const PROJECTS = [
     color: '#1a1915',
     accent: '#8B7355',
     image: '/bunav.png',
-    url: 'https://priyashreeacharya.myportfolio.com/bunav-parenting-app',
+    url: '/work/bunav',
   },
   {
     id: 'carbon-count',
@@ -1837,8 +1838,8 @@ function SandboxCard({ exp, delay, visible }) {
   useEffect(() => {
     if (!cardRef.current) return;
     const ro = new ResizeObserver(([entry]) => {
-      const { width: w, height: h } = entry.contentRect;
-      setPerimeter(2 * (w + h));
+      const el = entry.target;
+      setPerimeter(2 * (el.offsetWidth + el.offsetHeight));
     });
     ro.observe(cardRef.current);
     return () => ro.disconnect();
@@ -2418,6 +2419,7 @@ export default function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/work/carbon-count" element={<CarbonCountPage />} />
         <Route path="/work/paradyes" element={<ParadyesPage />} />
+        <Route path="/work/bunav" element={<BunavPage />} />
       </Routes>
     </BrowserRouter>
   );

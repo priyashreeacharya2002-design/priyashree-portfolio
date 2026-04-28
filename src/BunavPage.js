@@ -774,6 +774,130 @@ function UserPersona2Section() {
   );
 }
 
+// ─── S11: KEY CONSIDERATIONS ──────────────────────────────────────────────────
+function KeyConsiderationsSection() {
+  const blue  = '#0081AA';
+  const dark  = '#1C1C1A';
+  const grey  = '#6B6B6B';
+  const bg    = '#F5F4F0';
+
+  const left = [
+    {
+      n: '01',
+      title: 'Utility',
+      body: <>Translates memories into <strong>skill-building activities</strong> for children, provides journaling to track progress, and an Explore page to learn more.</>,
+    },
+    {
+      n: '02',
+      title: 'Impact',
+      body: <>Educates parents on <strong>early childhood development</strong> and its importance through a curated Explore page.</>,
+    },
+    {
+      n: '03',
+      title: 'Accessible',
+      body: <>A <strong>digital platform</strong> that's available to all, with an easy, playful, and comfortable UI.</>,
+    },
+  ];
+
+  const right = [
+    {
+      n: '04',
+      title: 'Innovation',
+      body: <>Enables healing and connection to the <strong>Inner Child</strong> by reliving memories, <strong>bringing the concept into a practical, digital reality.</strong></>,
+    },
+    {
+      n: '05',
+      title: 'Emotional Quotient',
+      body: <>Fosters nostalgia, <strong>meaningful bonding</strong>, spending quality time together, and creating new shared memories.</>,
+    },
+    {
+      n: '06',
+      title: 'Reality of Production',
+      body: <>Technically and economically feasible using <strong>existing app frameworks and digital distribution.</strong></>,
+    },
+  ];
+
+  return (
+    <section style={{ background: bg, fontFamily: FI }}>
+      {/* blue top bar */}
+      <div style={{ height: '8px', background: blue, width: '100%' }} />
+
+      {/* nav row */}
+      <div style={{ padding: '20px 72px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '13px', color: grey, fontWeight: 400 }}>Our Focus</span>
+        <span style={{ fontFamily: "'Mukta', sans-serif", fontSize: '20px', fontWeight: 700, color: dark }}>बुनाव</span>
+      </div>
+
+      {/* heading */}
+      <div style={{ padding: '8px 72px 48px' }}>
+        <h2 style={{ fontFamily: FI, fontWeight: 700, fontSize: 'clamp(36px, 4vw, 64px)', color: dark, margin: 0, letterSpacing: '-0.02em' }}>
+          Key Considerations
+        </h2>
+      </div>
+
+      {/* 3-col layout */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '0 40px', padding: '0 72px 72px', alignItems: 'center' }}>
+
+        {/* Left column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          {left.map((item) => (
+            <div key={item.n} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+              <div style={{
+                width: '48px', height: '48px', minWidth: '48px', borderRadius: '50%',
+                border: `1.5px solid ${blue}`, display: 'flex', alignItems: 'center',
+                justifyContent: 'center', fontFamily: FI, fontSize: '13px', fontWeight: 500, color: blue,
+              }}>
+                {item.n}
+              </div>
+              <div>
+                <div style={{ fontFamily: FI, fontWeight: 400, fontSize: 'clamp(20px, 2vw, 28px)', color: dark, marginBottom: '8px' }}>
+                  {item.title}
+                </div>
+                <div style={{ fontFamily: FI, fontSize: '14px', color: grey, lineHeight: 1.6, maxWidth: '300px' }}>
+                  {item.body}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Center — hexagon image */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src="/projects/bunav/hexagon.png"
+            alt="Key Considerations hexagon"
+            style={{ width: 'clamp(320px, 32vw, 480px)', height: 'auto', display: 'block' }}
+          />
+        </div>
+
+        {/* Right column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          {right.map((item) => (
+            <div key={item.n} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+              <div style={{
+                width: '48px', height: '48px', minWidth: '48px', borderRadius: '50%',
+                border: `1.5px solid ${blue}`, display: 'flex', alignItems: 'center',
+                justifyContent: 'center', fontFamily: FI, fontSize: '13px', fontWeight: 500, color: blue,
+              }}>
+                {item.n}
+              </div>
+              <div>
+                <div style={{ fontFamily: FI, fontWeight: 400, fontSize: 'clamp(20px, 2vw, 28px)', color: dark, marginBottom: '8px' }}>
+                  {item.title}
+                </div>
+                <div style={{ fontFamily: FI, fontSize: '14px', color: grey, lineHeight: 1.6, maxWidth: '300px' }}>
+                  {item.body}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function BunavPage() {
   useGlobalSetup();
@@ -791,6 +915,7 @@ export default function BunavPage() {
       <TargetAudienceSection />
       <UserPersonaSection />
       <UserPersona2Section />
+      <KeyConsiderationsSection />
     </div>
   );
 }

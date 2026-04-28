@@ -897,6 +897,103 @@ function KeyConsiderationsSection() {
   );
 }
 
+// ─── S12: UX MODEL ────────────────────────────────────────────────────────────
+function UXModelSection() {
+  const orange = '#EE5923';
+  const dark   = '#1C1C1A';
+  const grey   = '#9A9896';
+  const bg     = '#F5F4F0';
+
+  const items = [
+    {
+      icon: '/projects/bunav/icons/icon-functional.png',
+      label: 'FUNCTIONAL',
+      body: <>Parents can log in, record, and view their child's journey without confusion. Basic flows (activity, feedback, profile) <em>just work.</em></>,
+    },
+    {
+      icon: '/projects/bunav/icons/icon-reliable.png',
+      label: 'RELIABLE',
+      body: <>Data about child is safe, accurate, and consistent. No broken flows or errors undermine the trust.</>,
+    },
+    {
+      icon: '/projects/bunav/icons/icon-usable.png',
+      label: 'USABLE',
+      body: <>Parents don't have to think twice — quick buttons, emojis, voice notes make feedback and tracking <em>effortless.</em></>,
+    },
+    {
+      icon: '/projects/bunav/icons/icon-convenient.png',
+      label: 'CONVENIENT',
+      body: <>Simple check-ins, quick summaries, badges, and highlights that integrate into parents' routines without being overwhelming.</>,
+    },
+    {
+      icon: '/projects/bunav/icons/icon-pleasurable.png',
+      label: 'PLEASURABLE',
+      body: <>Colorful badges, cute crayon-style characters, and warm language celebrate the child's growth. It feels <em>joyful</em> to use.</>,
+    },
+    {
+      icon: '/projects/bunav/icons/icon-meaningful.png',
+      label: 'MEANINGFUL',
+      body: <>Parents feel deeply connected to their child's development journey. The app not only tracks growth but also creates shared memories and strengthens the parent–child bond.</>,
+    },
+  ];
+
+  return (
+    <section style={{ background: bg, fontFamily: FI }}>
+      {/* orange top bar */}
+      <div style={{ height: '8px', background: orange, width: '100%' }} />
+
+      {/* nav row */}
+      <div style={{ padding: '28px 72px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '13px', color: grey, fontWeight: 400 }}>User Experience Theory</span>
+        <span style={{ fontFamily: "'Mukta', sans-serif", fontSize: '20px', fontWeight: 700, color: dark }}>बुनाव</span>
+      </div>
+
+      {/* heading block */}
+      <div style={{ padding: '36px 72px 0' }}>
+        <h2 style={{ fontFamily: FI, fontWeight: 700, fontSize: 'clamp(28px, 3vw, 48px)', color: dark, margin: '0 0 8px', letterSpacing: '-0.01em' }}>
+          UX Model
+        </h2>
+        <p style={{ fontFamily: FI, fontWeight: 400, fontSize: 'clamp(20px, 2.4vw, 36px)', color: grey, margin: 0, letterSpacing: '-0.01em' }}>
+          Anderson's User Experience Hierarchy of Needs
+        </p>
+      </div>
+
+      {/* 6-col icon grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '0 24px', padding: '64px 72px 0' }}>
+        {items.map((item) => (
+          <div key={item.label} style={{ display: 'flex', flexDirection: 'column' }}>
+            <img
+              src={item.icon}
+              alt={item.label}
+              style={{ width: '64px', height: '64px', objectFit: 'contain', marginBottom: '32px' }}
+            />
+            <div style={{ fontFamily: FI, fontSize: '13px', fontWeight: 700, letterSpacing: '0.08em', color: dark, marginBottom: '12px' }}>
+              {item.label}
+            </div>
+            <div style={{ fontFamily: FI, fontSize: '14px', color: grey, lineHeight: 1.65 }}>
+              {item.body}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* quote block */}
+      <div style={{ padding: '80px 72px 72px', textAlign: 'center' }}>
+        <div style={{ fontSize: '48px', color: orange, lineHeight: 1, marginBottom: '12px', letterSpacing: '-0.02em' }}>
+          <span style={{ marginRight: '12px' }}>"</span>
+          <span>"</span>
+        </div>
+        <p style={{
+          fontFamily: FI, fontSize: 'clamp(16px, 1.6vw, 22px)', fontStyle: 'italic', fontWeight: 700,
+          color: dark, lineHeight: 1.55, margin: '0 auto', maxWidth: '820px',
+        }}>
+          "Designing for experiences is fundamentally about people, their activities, and the context of those activities."
+        </p>
+      </div>
+    </section>
+  );
+}
+
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function BunavPage() {
   useGlobalSetup();
@@ -915,6 +1012,7 @@ export default function BunavPage() {
       <UserPersonaSection />
       <UserPersona2Section />
       <KeyConsiderationsSection />
+      <UXModelSection />
     </div>
   );
 }

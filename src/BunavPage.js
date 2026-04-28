@@ -823,14 +823,13 @@ function KeyConsiderationsSection() {
       <div style={{ height: '8px', background: blue, width: '100%' }} />
 
       {/* nav row */}
-      <div style={{ padding: '20px 72px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ padding: '28px 72px 0' }}>
         <span style={{ fontSize: '13px', color: grey, fontWeight: 400 }}>Our Focus</span>
-        <span style={{ fontFamily: "'Mukta', sans-serif", fontSize: '20px', fontWeight: 700, color: dark }}>बुनाव</span>
       </div>
 
       {/* heading */}
-      <div style={{ padding: '8px 72px 48px' }}>
-        <h2 style={{ fontFamily: FI, fontWeight: 700, fontSize: 'clamp(36px, 4vw, 64px)', color: dark, margin: 0, letterSpacing: '-0.02em' }}>
+      <div style={{ padding: '36px 72px 0' }}>
+        <h2 style={{ fontFamily: FI, fontWeight: 400, fontSize: 'clamp(28px, 3vw, 48px)', color: dark, margin: 0, letterSpacing: '-0.01em' }}>
           Key Considerations
         </h2>
       </div>

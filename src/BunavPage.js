@@ -1214,12 +1214,12 @@ function StoryboardSection() {
         <img
           src="/projects/bunav/sb-problem.png"
           alt="Storyboard — problem scenarios"
-          style={{ width: '100%', display: 'block', ...fadeUp(visible, 0.1) }}
+          style={{ width: '80%', display: 'block', ...fadeUp(visible, 0.1) }}
         />
         <img
           src="/projects/bunav/sb-solution.png"
           alt="Storyboard — Bunav solution"
-          style={{ width: '100%', display: 'block', ...fadeUp(visible, 0.2) }}
+          style={{ width: '80%', display: 'block', ...fadeUp(visible, 0.2) }}
         />
       </div>
     </section>

@@ -1001,7 +1001,7 @@ function InformationArchitectureSection() {
   const grey   = '#9A9896';
   const bg     = '#F5F4F0';
   const fi     = "'Inter', sans-serif";
-  const sw     = 1.2;
+  const sw     = 1.5;
 
   const Box = ({ cx, cy, w = 115, h = 34, fs = 11.5, label }) => (
     <g>
@@ -1031,7 +1031,9 @@ function InformationArchitectureSection() {
     </g>
   );
 
+  /* arrow (with arrowhead at end) */
   const Arr = ({ x1, y1, x2, y2 }) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={dark} strokeWidth={sw} markerEnd="url(#ia-ah)"/>;
+  /* plain line */
   const Ln  = ({ x1, y1, x2, y2 }) => <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={dark} strokeWidth={sw}/>;
 
   const desc = [
@@ -1058,132 +1060,167 @@ function InformationArchitectureSection() {
       </div>
 
       <div style={{ padding: '32px 72px 64px' }}>
-        {/* viewBox: 1280 wide × 610 tall — skills col fits, bottom section has room */}
-        <svg viewBox="0 0 1280 610" style={{ width: '100%', height: 'auto', display: 'block' }}>
+        {/*
+          Column guide  (cx values):
+            175 Splash | 320 About | 468 SignUp / Change Prompt
+            672 Homepage | 820 Prompt → Diamond → Add Memory → Re-weave → Activity Suggestion
+            370 Parent Feedback / Did Child Participate?
+            570 Activity Experience / Do
+            820 Activity Suggestion / Skip  (same col as above)
+            980 How it will Help
+            1068 skills trunk | 1165-1172 skill boxes
+        */}
+        <svg viewBox="0 0 1300 640" style={{ width: '100%', height: 'auto', display: 'block' }}>
           <defs>
-            <marker id="ia-ah" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,1 L5,3 L0,5 Z" fill={dark}/>
+            <marker id="ia-ah" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+              <path d="M0,0.5 L7,3.5 L0,6.5 Z" fill={dark}/>
             </marker>
           </defs>
 
-          {/* ── Explore / Profile / General (above Homepage at cx=680) ── */}
-          <Box cx={620} cy={34} w={85} h={28} label="Explore"/>
-          <Box cx={700} cy={34} w={75} h={28} label="Profile"/>
-          <Box cx={785} cy={34} w={75} h={28} label="General"/>
-          <Ln x1={620} y1={48} x2={620} y2={62}/>
-          <Ln x1={700} y1={48} x2={700} y2={62}/>
-          <Ln x1={785} y1={48} x2={785} y2={62}/>
-          <Ln x1={620} y1={62} x2={785} y2={62}/>
-          <Ln x1={680} y1={62} x2={680} y2={83}/>
+          {/* ─── Explore / Profile / General (secondary nav above Homepage) ─── */}
+          <Box cx={600} cy={34} w={85} h={28} label="Explore"/>
+          <Box cx={692} cy={34} w={75} h={28} label="Profile"/>
+          <Box cx={780} cy={34} w={75} h={28} label="General"/>
+          <Ln x1={600} y1={48} x2={600} y2={62}/>
+          <Ln x1={692} y1={48} x2={692} y2={62}/>
+          <Ln x1={780} y1={48} x2={780} y2={62}/>
+          <Ln x1={600} y1={62} x2={780} y2={62}/>
+          {/* drop straight to Homepage (cx=672) */}
+          <Arr x1={672} y1={62} x2={672} y2={84}/>
 
-          {/* ── Main horizontal row (y=100) ── */}
-          <Box cx={260} cy={100} w={112} h={34} label="Splash screen"/>
-          <Box cx={400} cy={100} w={112} h={34} label="About the app"/>
-          <Box cx={540} cy={100} w={112} h={34} label="Sign up/Login"/>
-          <Box cx={680} cy={100} w={100} h={34} label="Homepage"/>
-          <Box cx={820} cy={100} w={90}  h={34} label="Prompt"/>
+          {/* ─── Main row (y=102) ─── */}
+          <Box cx={175} cy={102} w={112} h={34} label="Splash screen"/>
+          <Box cx={320} cy={102} w={112} h={34} label="About the app"/>
+          <Box cx={468} cy={102} w={112} h={34} label="Sign up/Login"/>
+          <Box cx={672} cy={102} w={108} h={34} label="Homepage"/>
+          <Box cx={820} cy={102} w={90}  h={34} label="Prompt"/>
+          {/* horizontal arrows */}
+          <Arr x1={231} y1={102} x2={263} y2={102}/>
+          <Arr x1={376} y1={102} x2={411} y2={102}/>
+          <Arr x1={524} y1={102} x2={617} y2={102}/>
+          <Arr x1={726} y1={102} x2={774} y2={102}/>
 
-          <Arr x1={316} y1={100} x2={344} y2={100}/>
-          <Arr x1={456} y1={100} x2={484} y2={100}/>
-          <Arr x1={596} y1={100} x2={630} y2={100}/>
-          <Arr x1={730} y1={100} x2={775} y2={100}/>
+          {/* ─── Prompt ↓ Can parent recall? ─── */}
+          <Arr x1={820} y1={119} x2={820} y2={155}/>
+          <Dia cx={820} cy={184} w={136} h={56} label="Can parent recall?"/>
 
-          {/* Prompt → Can parent recall? */}
-          <Arr x1={820} y1={117} x2={820} y2={158}/>
+          {/* No → Can't Recall → Change Prompt */}
+          <Arr x1={752} y1={184} x2={676} y2={184}/>
+          <Par cx={612} cy={184} w={120} h={34} sk={10} label="Can't Recall (No)"/>
+          {/* elbow down → left → down */}
+          <Ln  x1={612} y1={201} x2={612} y2={224}/>
+          <Ln  x1={612} y1={224} x2={468} y2={224}/>
+          <Arr x1={468} y1={224} x2={468} y2={257}/>
+          <Box cx={468} cy={274} w={118} h={34} label="Change Prompt"/>
 
-          {/* ── Can parent recall? diamond (cx=820, cy=186) ── */}
-          <Dia cx={820} cy={186} w={132} h={54} label="Can parent recall?"/>
+          {/* Yes ↓ Add Memory */}
+          <Arr x1={820} y1={212} x2={820} y2={243}/>
+          <Par cx={820} cy={260} w={108} h={34} sk={10} label="Add Memory"/>
+          {/* right branches from Add Memory */}
+          <Arr x1={874} y1={253} x2={916} y2={247}/>
+          <Par cx={962} cy={247} w={88} h={28} sk={8} label="Add Photo"/>
+          <Arr x1={874} y1={267} x2={916} y2={273}/>
+          <Par cx={958} cy={273} w={72} h={28} sk={8} label="Audio"/>
 
-          {/* No → left → Can't Recall */}
-          <Arr x1={754} y1={186} x2={704} y2={186}/>
-          <Par cx={640} cy={186} w={120} h={33} sk={10} label="Can't Recall (No)"/>
+          {/* Add Memory ↓ Re-weave ↓ Activity Suggestion */}
+          <Arr x1={820} y1={277} x2={820} y2={311}/>
+          <Box cx={820} cy={328} w={164} h={34} label="Re-weave this Memory"/>
+          <Arr x1={820} y1={345} x2={820} y2={397}/>
 
-          {/* Can't Recall → Change Prompt (loop left-down) */}
-          <Ln x1={640} y1={203} x2={640} y2={226}/>
-          <Ln x1={640} y1={226} x2={540} y2={226}/>
-          <Arr x1={540} y1={226} x2={540} y2={244}/>
-          <Box cx={540} cy={261} w={118} h={34} label="Change Prompt"/>
+          {/* ─── Activity row (y=415) ─── */}
+          <Par cx={370} cy={415} w={124} h={34} sk={10} label="Parent Feedback"/>
+          <Box cx={570} cy={415} w={134} h={34} label="Activity Experience"/>
+          <Box cx={820} cy={415} w={134} h={34} label="Activity Suggestion"/>
+          <Box cx={980} cy={415} w={130} h={34} label="How it will Help"/>
 
-          {/* Yes → down → Add Memory */}
-          <Arr x1={820} y1={213} x2={820} y2={244}/>
-          <Par cx={820} cy={261} w={108} h={34} sk={10} label="Add Memory"/>
+          {/* Activity Suggestion → Activity Experience (←) */}
+          <Arr x1={752} y1={415} x2={638} y2={415}/>
 
-          {/* Add Memory → Add Photo (branch right-up) */}
-          <Arr x1={874} y1={254} x2={924} y2={248}/>
-          <Par cx={970} cy={248} w={88} h={28} sk={8} label="Add Photo"/>
+          {/* Activity Suggestion → How it will Help (→) */}
+          <Arr x1={887} y1={415} x2={914} y2={415}/>
 
-          {/* Add Memory → Audio (branch right-down) */}
-          <Arr x1={874} y1={268} x2={924} y2={274}/>
-          <Par cx={970} cy={274} w={72} h={28} sk={8} label="Audio"/>
+          {/* Parent Feedback ↔ Activity Experience (bidirectional, ±9 px) */}
+          <Arr x1={503} y1={406} x2={434} y2={406}/>
+          <Arr x1={434} y1={424} x2={503} y2={424}/>
 
-          {/* Add Memory → Re-weave this Memory */}
-          <Arr x1={820} y1={278} x2={820} y2={313}/>
-          <Box cx={820} cy={330} w={160} h={34} label="Re-weave this Memory"/>
+          {/* ─── How it will Help → Skills (tree) ─── */}
+          <Ln  x1={1045} y1={415} x2={1068} y2={415}/>
+          <Ln  x1={1068} y1={385} x2={1068} y2={445}/>
+          <Arr x1={1068} y1={385} x2={1096} y2={385}/>
+          <Arr x1={1068} y1={415} x2={1096} y2={415}/>
+          <Arr x1={1068} y1={445} x2={1096} y2={445}/>
+          <Box cx={1165} cy={385} w={128} h={30} fs={11} label="Cognitive Skills"/>
+          <Box cx={1157} cy={415} w={112} h={30} fs={11} label="Motor Skills"/>
+          <Box cx={1172} cy={445} w={148} h={30} fs={11} label="Socio-Emotional Skills"/>
 
-          {/* Re-weave → Activity Suggestion */}
-          <Arr x1={820} y1={347} x2={820} y2={398}/>
-
-          {/* ── Activity row (y=415) ── */}
-          {/* Parent Feedback (cx=400) */}
-          <Par cx={400} cy={415} w={120} h={34} sk={10} label="Parent Feedback"/>
-          {/* Activity Experience (cx=600) */}
-          <Box cx={600} cy={415} w={130} h={34} label="Activity Experience"/>
-          {/* Activity Suggestion (cx=820) */}
-          <Box cx={820} cy={415} w={130} h={34} label="Activity Suggestion"/>
-          {/* How it will Help (cx=985) */}
-          <Box cx={985} cy={415} w={126} h={34} label="How it will Help"/>
-
-          {/* Activity Suggestion → Activity Experience (left arrow) */}
-          <Arr x1={754} y1={415} x2={666} y2={415}/>
-
-          {/* Parent Feedback ↔ Activity Experience (bidirectional, offset ±7) */}
-          <Arr x1={535} y1={408} x2={462} y2={408}/>
-          <Arr x1={462} y1={422} x2={535} y2={422}/>
-
-          {/* How it will Help → Cognitive / Motor / Socio-Emotional Skills */}
-          <Ln x1={1048} y1={405} x2={1080} y2={392}/>
-          <Arr x1={1080} y1={392} x2={1088} y2={392}/>
-          <Box cx={1155} cy={388} w={118} h={28} fs={11} label="Cognitive Skills"/>
-
-          <Arr x1={1048} y1={415} x2={1088} y2={415}/>
-          <Box cx={1148} cy={415} w={95}  h={28} fs={11} label="Motor Skills"/>
-
-          <Ln x1={1048} y1={425} x2={1080} y2={438}/>
-          <Arr x1={1080} y1={438} x2={1088} y2={438}/>
-          <Box cx={1160} cy={438} w={148} h={28} fs={11} label="Socio-Emotional Skills"/>
-
-          {/* Activity Experience → Do  |  Activity Suggestion → Skip */}
-          <Ln x1={600} y1={432} x2={600} y2={460}/>
-          <Par cx={600} cy={474} w={62} h={28} sk={8} label="Do"/>
-          <Ln x1={820} y1={432} x2={820} y2={460}/>
+          {/* ─── Do / Skip ─── */}
+          <Ln  x1={570} y1={432} x2={570} y2={460}/>
+          <Par cx={570} cy={474} w={62} h={28} sk={8} label="Do"/>
+          <Ln  x1={820} y1={432} x2={820} y2={460}/>
           <Par cx={820} cy={474} w={62} h={28} sk={8} label="Skip"/>
 
-          {/* Parent Feedback → Did Child Participate? */}
-          <Arr x1={400} y1={432} x2={400} y2={508}/>
-          <Dia cx={400} cy={538} w={140} h={54} label="Did Child Participate?"/>
+          {/* ─── Parent Feedback ↓ Did Child Participate? ─── */}
+          <Arr x1={370} y1={432} x2={370} y2={507}/>
+          <Dia cx={370} cy={536} w={148} h={56} label="Did Child Participate?"/>
 
           {/* No → Supportive Suggestion */}
-          <Arr x1={470} y1={528} x2={556} y2={523}/>
-          <Box2 cx={660} cy={523} w={158} h={38} line1="Supportive Suggestion" line2="(No)"/>
+          <Arr x1={444} y1={523} x2={535} y2={519}/>
+          <Box2 cx={648} cy={519} w={162} h={38} line1="Supportive Suggestion" line2="(No)"/>
 
           {/* Yes → Reflection & Observation */}
-          <Arr x1={470} y1={548} x2={556} y2={556}/>
-          <Box2 cx={665} cy={556} w={165} h={38} line1="Reflection &amp; Observation" line2="(Yes)"/>
+          <Arr x1={444} y1={549} x2={535} y2={557}/>
+          <Box2 cx={654} cy={557} w={168} h={38} line1="Reflection &amp; Observation" line2="(Yes)"/>
 
-          {/* Both → Smart Suggestions for next activity */}
-          <Arr x1={739} y1={523} x2={774} y2={535}/>
-          <Arr x1={748} y1={556} x2={774} y2={546}/>
-          <Box2 cx={858} cy={540} w={172} h={38} line1="Smart Suggestions for" line2="next activity"/>
+          {/* Both → Smart Suggestions */}
+          <Arr x1={729} y1={519} x2={760} y2={531}/>
+          <Arr x1={738} y1={557} x2={760} y2={547}/>
+          <Box2 cx={848} cy={538} w={168} h={38} line1="Smart Suggestions for" line2="next activity"/>
 
-          {/* Smart Suggestions → Loop resets back to Homepage */}
-          <Arr x1={944} y1={540} x2={976} y2={540}/>
-          <Box2 cx={1062} cy={540} w={165} h={38} line1="Loop resets back to" line2="Homepage"/>
+          {/* Smart Suggestions → Loop resets */}
+          <Arr x1={932} y1={538} x2={963} y2={538}/>
+          <Box2 cx={1052} cy={538} w={168} h={38} line1="Loop resets back to" line2="Homepage"/>
 
-          {/* ── Description text (lower-left) ── */}
+          {/* ─── Description text (lower-left) ─── */}
           {desc.map((line, i) => (
-            <text key={i} x={30} y={342 + i * 19} fontFamily={fi} fontSize={12} fill={grey}>{line}</text>
+            <text key={i} x={28} y={348 + i * 19} fontFamily={fi} fontSize={11.5} fill={grey}>{line}</text>
           ))}
         </svg>
+      </div>
+    </section>
+  );
+}
+
+// ─── STORYBOARD ───────────────────────────────────────────────────────────────
+function StoryboardSection() {
+  const teal  = '#006457';
+  const dark  = '#1C1C1A';
+  const grey  = '#9A9896';
+  const [ref, visible] = useFadeIn();
+
+  return (
+    <section ref={ref} style={{ background: '#fff' }}>
+      <div style={{ height: '8px', background: teal }}/>
+      <div style={{ padding: '28px 72px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: '13px', color: grey, fontWeight: 400 }}>Visualisation</span>
+        <span style={{ fontFamily: "'Mukta',sans-serif", fontSize: '20px', fontWeight: 700, color: dark }}>बुनाव</span>
+      </div>
+      <div style={{ padding: '24px 72px 0' }}>
+        <h2 style={{ fontFamily: FI, fontWeight: 400, fontSize: 'clamp(28px,3vw,48px)', color: dark, margin: 0, letterSpacing: '-0.01em', ...fadeUp(visible) }}>
+          Storyboard
+        </h2>
+      </div>
+      {/* image 3 and image 4 are two cropped halves of the same storyboard spread */}
+      <div style={{ padding: '32px 72px 64px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <img
+          src="/projects/bunav/storyboard-1.png"
+          alt="Storyboard — problem scenarios"
+          style={{ width: '100%', display: 'block', ...fadeUp(visible, 0.1) }}
+        />
+        <img
+          src="/projects/bunav/storyboard-2.png"
+          alt="Storyboard — Bunav solution"
+          style={{ width: '100%', display: 'block', ...fadeUp(visible, 0.2) }}
+        />
       </div>
     </section>
   );
@@ -1209,6 +1246,7 @@ export default function BunavPage() {
       <KeyConsiderationsSection />
       <UXModelSection />
       <InformationArchitectureSection />
+      <StoryboardSection />
     </div>
   );
 }

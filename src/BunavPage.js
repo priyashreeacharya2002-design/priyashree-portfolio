@@ -1228,97 +1228,14 @@ function StoryboardSection() {
 
 // ─── VISUAL DESIGN ────────────────────────────────────────────────────────────
 function VisualDesignSection() {
-  const dark = '#1C1C1A';
-  const grey = '#9A9896';
   const [ref, visible] = useFadeIn();
-
-  const palette = [
-    { hex: '#EE5923', label: '#EE5923' },
-    { hex: '#F281A8', label: '#F281A8' },
-    { hex: '#0081AA', label: '#0081AA' },
-    { hex: '#F9A11B', label: '#F9A11B' },
-    { hex: '#006457', label: '#006457' },
-    { hex: '#DDDCDC', label: '#DDDCDC' },
-  ];
-
-  const illus = [
-    { src: '/projects/bunav/illus/orange.png', alt: 'orange crayon scribble' },
-    { src: '/projects/bunav/illus/yellow.png', alt: 'yellow crayon sunburst' },
-    { src: '/projects/bunav/illus/teal.png',   alt: 'teal crayon heart'    },
-    { src: '/projects/bunav/illus/blue.png',   alt: 'blue crayon cloud'    },
-    { src: '/projects/bunav/illus/pink.png',   alt: 'pink crayon flower'   },
-  ];
-
   return (
-    <section ref={ref} style={{ background: '#F7F6F3', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', minHeight: '560px' }}>
-
-        {/* ── Left: typography panel ── */}
-        <div style={{ width: '44%', padding: '48px 64px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', ...fadeUp(visible) }}>
-          <div>
-            <span style={{ fontSize: '13px', color: grey, fontWeight: 400, fontFamily: FI }}>Style Guide</span>
-            <h2 style={{ fontFamily: F.display, fontWeight: 700, fontSize: 'clamp(36px,3.5vw,60px)', color: dark, margin: '18px 0 16px', lineHeight: 1.05, letterSpacing: '-0.02em' }}>
-              Visual Design
-            </h2>
-            <p style={{ fontSize: '14px', color: grey, lineHeight: 1.65, maxWidth: '280px', margin: 0, fontFamily: FI }}>
-              Playful crayon strokes inspired by kids' drawings pair with bold colors and Filson Pro for a joyful, trustworthy identity.
-            </p>
-          </div>
-
-          <div>
-            {/* Aa image */}
-            <img
-              src="/projects/bunav/Aa.png"
-              alt="Aa typography specimen"
-              style={{ width: '72%', maxWidth: '320px', display: 'block', marginBottom: '20px' }}
-            />
-            <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: '26px', color: dark }}>Filson Pro</div>
-            <div style={{ fontSize: '13px', color: grey, marginTop: '4px', fontFamily: FI }}>Typography</div>
-          </div>
-        </div>
-
-        {/* ── Right: colour palette + illustrations ── */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', ...fadeUp(visible, 0.15) }}>
-
-          {/* Colour swatches — full-width tall bars */}
-          <div style={{ flex: 1, display: 'flex', position: 'relative' }}>
-            {/* rotated label */}
-            <div style={{
-              position: 'absolute', left: '-54px', top: '50%',
-              transform: 'rotate(-90deg) translateX(-50%)',
-              fontSize: '12px', color: grey, letterSpacing: '0.06em',
-              fontFamily: FI, whiteSpace: 'nowrap',
-            }}>
-              Colour Palette
-            </div>
-            {palette.map(c => (
-              <div key={c.hex} style={{ flex: 1, background: c.hex }}/>
-            ))}
-          </div>
-
-          {/* Hex labels */}
-          <div style={{ display: 'flex', background: '#F7F6F3', paddingBottom: '8px' }}>
-            {palette.map(c => (
-              <div key={c.hex} style={{ flex: 1, paddingTop: '10px', paddingLeft: '4px', fontSize: '10.5px', color: grey, fontFamily: FI }}>
-                {c.label}
-              </div>
-            ))}
-          </div>
-
-          {/* Illustration icons */}
-          <div style={{ padding: '28px 0 48px 4px', background: '#F7F6F3' }}>
-            <div style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
-              {illus.map((il, i) => (
-                <img key={i} src={il.src} alt={il.alt}
-                  style={{ width: '72px', height: '72px', objectFit: 'contain' }}
-                />
-              ))}
-            </div>
-            <div style={{ fontSize: '13px', color: grey, marginTop: '14px', fontFamily: FI }}>Illustration Style</div>
-          </div>
-        </div>
-
-      </div>
+    <section ref={ref}>
+      <img
+        src="/projects/bunav/visual-design.jpg"
+        alt="Visual Design — style guide"
+        style={{ width: '100%', display: 'block', ...fadeUp(visible) }}
+      />
     </section>
   );
 }

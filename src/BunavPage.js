@@ -1210,7 +1210,7 @@ function StoryboardSection() {
         </h2>
       </div>
       {/* image 3 and image 4 are two cropped halves of the same storyboard spread */}
-      <div style={{ padding: '32px 72px 64px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+      <div style={{ padding: '32px 72px 64px', display: 'flex', flexDirection: 'column', gap: 0, alignItems: 'center' }}>
         <img
           src="/projects/bunav/sb-problem.png"
           alt="Storyboard — problem scenarios"

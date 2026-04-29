@@ -1212,12 +1212,12 @@ function StoryboardSection() {
       {/* image 3 and image 4 are two cropped halves of the same storyboard spread */}
       <div style={{ padding: '32px 72px 64px', display: 'flex', flexDirection: 'column', gap: 0 }}>
         <img
-          src="/projects/bunav/storyboard-1.png"
+          src="/projects/bunav/sb-problem.png"
           alt="Storyboard — problem scenarios"
           style={{ width: '100%', display: 'block', ...fadeUp(visible, 0.1) }}
         />
         <img
-          src="/projects/bunav/storyboard-2.png"
+          src="/projects/bunav/sb-solution.png"
           alt="Storyboard — Bunav solution"
           style={{ width: '100%', display: 'block', ...fadeUp(visible, 0.2) }}
         />

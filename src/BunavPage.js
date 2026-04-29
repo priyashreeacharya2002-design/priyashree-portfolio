@@ -1239,6 +1239,19 @@ function VisualDesignSection() {
   );
 }
 
+// ─── INTRODUCING BUNAV ────────────────────────────────────────────────────────
+function IntroducingBunavSection() {
+  return (
+    <section>
+      <img
+        src="/projects/bunav/introducing-bunav.jpg"
+        alt="Introducing Bunav"
+        style={{ width: '100%', display: 'block' }}
+      />
+    </section>
+  );
+}
+
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function BunavPage() {
   useGlobalSetup();
@@ -1261,6 +1274,7 @@ export default function BunavPage() {
       <InformationArchitectureSection />
       <StoryboardSection />
       <VisualDesignSection />
+      <IntroducingBunavSection />
     </div>
   );
 }

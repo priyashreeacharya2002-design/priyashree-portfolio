@@ -1228,13 +1228,12 @@ function StoryboardSection() {
 
 // ─── VISUAL DESIGN ────────────────────────────────────────────────────────────
 function VisualDesignSection() {
-  const [ref, visible] = useFadeIn();
   return (
-    <section ref={ref}>
+    <section>
       <img
         src="/projects/bunav/visual-design.jpg"
         alt="Visual Design — style guide"
-        style={{ width: '100%', display: 'block', ...fadeUp(visible) }}
+        style={{ width: '100%', display: 'block' }}
       />
     </section>
   );

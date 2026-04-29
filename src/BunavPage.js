@@ -1198,7 +1198,7 @@ function StoryboardSection() {
   const [ref, visible] = useFadeIn();
 
   return (
-    <section ref={ref} style={{ background: '#fff' }}>
+    <section ref={ref} style={{ background: BN.bg }}>
       <div style={{ height: '8px', background: teal }}/>
       <div style={{ padding: '28px 72px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{ fontSize: '13px', color: grey, fontWeight: 400 }}>Visualisation</span>

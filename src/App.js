@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-ro
 import CarbonCountPage from './CarbonCountPage';
 import ParadyesPage from './ParadyesPage';
 import BunavPage from './BunavPage';
+import EmberPage from './EmberPage';
 import * as THREE from 'three';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -121,7 +122,7 @@ const PROJECTS = [
     color: '#141310',
     accent: '#5C5248',
     image: '/ember.png',
-    url: 'https://priyashreeacharya.myportfolio.com/ember-mental-health-app',
+    url: '/work/ember',
   },
 ];
 
@@ -2416,6 +2417,7 @@ export default function App() {
         <Route path="/work/carbon-count" element={<CarbonCountPage />} />
         <Route path="/work/paradyes" element={<ParadyesPage />} />
         <Route path="/work/bunav" element={<BunavPage />} />
+        <Route path="/work/ember" element={<EmberPage />} />
       </Routes>
     </BrowserRouter>
   );

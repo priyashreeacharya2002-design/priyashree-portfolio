@@ -1252,6 +1252,91 @@ function IntroducingBunavSection() {
   );
 }
 
+// ─── PAGES 18–24 ──────────────────────────────────────────────────────────────
+function OnboardingScreensSection() {
+  return (
+    <section>
+      <img
+        src="/projects/bunav/onboarding-screens.jpg"
+        alt="Onboarding screens — AI Prompts to Rewind"
+        style={{ width: '100%', display: 'block' }}
+      />
+    </section>
+  );
+}
+
+function PromptsToMemoriesSection() {
+  return (
+    <section>
+      <img
+        src="/projects/bunav/prompts-to-memories.jpg"
+        alt="Prompts to Memories to Activities to Feedback"
+        style={{ width: '100%', display: 'block' }}
+      />
+    </section>
+  );
+}
+
+function HomepageAnnotationSection() {
+  return (
+    <section>
+      <img
+        src="/projects/bunav/homepage-annotation.jpg"
+        alt="Homepage annotation"
+        style={{ width: '100%', display: 'block' }}
+      />
+    </section>
+  );
+}
+
+function MemoriesIntoMomentsSection() {
+  return (
+    <section>
+      <img
+        src="/projects/bunav/memories-into-moments.jpg"
+        alt="Memories into Moments"
+        style={{ width: '100%', display: 'block' }}
+      />
+    </section>
+  );
+}
+
+function ExploreJournalCollectSection() {
+  return (
+    <section>
+      <img
+        src="/projects/bunav/explore-journal-collect.jpg"
+        alt="Explore / Journal / Collect"
+        style={{ width: '100%', display: 'block' }}
+      />
+    </section>
+  );
+}
+
+function WhatWeNoticedSection() {
+  return (
+    <section>
+      <img
+        src="/projects/bunav/what-we-noticed.jpg"
+        alt="What We Noticed — Sid the Explorer"
+        style={{ width: '100%', display: 'block' }}
+      />
+    </section>
+  );
+}
+
+function BanaoRishteySection() {
+  return (
+    <section>
+      <img
+        src="/projects/bunav/banao-rishtey.jpg"
+        alt="बनाओ रिश्ते — closing slide"
+        style={{ width: '100%', display: 'block' }}
+      />
+    </section>
+  );
+}
+
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function BunavPage() {
   useGlobalSetup();
@@ -1275,6 +1360,13 @@ export default function BunavPage() {
       <StoryboardSection />
       <VisualDesignSection />
       <IntroducingBunavSection />
+      <OnboardingScreensSection />
+      <PromptsToMemoriesSection />
+      <HomepageAnnotationSection />
+      <MemoriesIntoMomentsSection />
+      <ExploreJournalCollectSection />
+      <WhatWeNoticedSection />
+      <BanaoRishteySection />
     </div>
   );
 }

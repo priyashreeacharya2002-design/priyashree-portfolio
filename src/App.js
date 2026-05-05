@@ -124,6 +124,28 @@ const PROJECTS = [
     image: '/ember.png',
     url: '/work/ember',
   },
+  {
+    id: 'ferrari-ar',
+    name: 'FERRARI AR',
+    categoryLabel: 'AR Experience Design',
+    type: 'Interaction Design',
+    description: 'An augmented reality experience that brings the Ferrari brand to life through immersive spatial design.',
+    color: '#110a08',
+    accent: '#7A3020',
+    image: '/ferrari-ar.png',
+    url: '/work/ferrari-ar',
+  },
+  {
+    id: 'anvaya',
+    name: 'ANVAYA',
+    categoryLabel: 'Brand Identity',
+    type: 'Branding & Visual System',
+    description: 'A brand identity project rooted in cultural continuity and contemporary design sensibility.',
+    color: '#0e0e0c',
+    accent: '#5C6B4E',
+    image: '/anvaya.png',
+    url: '/work/anvaya',
+  },
 ];
 
 const DIGESTS = [
@@ -144,6 +166,24 @@ const DIGESTS = [
     readTime: '5 min read',
     image: '/melt.png',
     url: 'https://medium.com/@priyashreeacharya2002/melt-the-weight-of-expectations-visual-design-6464dff5f085',
+  },
+  {
+    id: 3,
+    title: 'Designing for Engagement: A Behavioral Intervention for Blue-Collar Workers at Swiggy',
+    subtitle: 'How behavioral design principles can improve engagement and motivation for delivery partners.',
+    tag: 'Behavioral Design',
+    readTime: '7 min read',
+    image: '',
+    url: 'https://medium.com/@priyashreeacharya2002/designing-for-engagement-a-behavioral-intervention-for-blue-collar-workers-at-swiggy-a6a98383865f',
+  },
+  {
+    id: 4,
+    title: 'Nidra — UI/UX Design',
+    subtitle: 'A sleep and wellness app designed to help users build healthier bedtime routines.',
+    tag: 'UI/UX Design',
+    readTime: '',
+    image: '',
+    url: 'https://www.behance.net/gallery/243816955/Nidra-UIUX-Design',
   },
 ];
 
@@ -1236,7 +1276,7 @@ function DigestsSection() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
           {DIGESTS.map((article, i) => (
             <DigestCard key={article.id} article={article} delay={i * 0.1} visible={visible} />
           ))}
@@ -1253,115 +1293,94 @@ function DigestCard({ article, delay, visible }) {
     <div
       style={{
         ...fadeUp(visible, delay),
-        borderTop: `1px solid ${COLORS.border}`,
-        padding: '36px 0',
-        display: 'flex',
-        gap: '40px',
-        alignItems: 'flex-start',
         cursor: 'pointer',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
         transition: 'opacity 0.8s ease, transform 0.8s ease',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => article.url && window.open(article.url, '_blank')}
     >
-      {/* Number */}
-      <span style={{
-        fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-        fontWeight: 300,
-        fontSize: '11px',
-        color: COLORS.textMuted,
-        minWidth: '28px',
-        paddingTop: '4px',
-      }}>
-        0{article.id}
-      </span>
-
-      {/* Cover area */}
+      {/* Cover image */}
       <div style={{
-        width: '120px',
-        height: '80px',
+        width: '100%',
+        height: '320px',
         flexShrink: 0,
-        background: hovered
-          ? 'linear-gradient(135deg, #1c1a17 0%, #141210 100%)'
-          : 'linear-gradient(135deg, #141210 0%, #0f0e0c 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'background 0.3s ease',
         overflow: 'hidden',
+        background: '#1a1915',
+        position: 'relative',
       }}>
         {article.image ? (
           <img src={article.image} alt={article.title} loading="lazy" style={{
             width: '100%', height: '100%', objectFit: 'cover',
+            transform: hovered ? 'scale(1.04)' : 'scale(1)',
+            transition: 'transform 0.5s ease',
           }} />
         ) : (
-          <div style={{
-            width: '30px', height: '30px',
-            border: `1px solid ${COLORS.border}`,
-            transform: 'rotate(45deg)',
-            opacity: hovered ? 0.6 : 0.2,
-            transition: 'opacity 0.3s ease',
-          }} />
+          <div style={{ width: '100%', height: '100%', background: '#1a1915' }} />
         )}
       </div>
 
-      {/* Content */}
-      <div style={{ flex: 1 }}>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '12px' }}>
-          <span style={{
+      {/* Footer */}
+      <div style={{
+        background: '#111',
+        padding: '20px 20px 22px',
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: '16px',
+        height: '110px',
+        boxSizing: 'border-box',
+      }}>
+        <div style={{ flex: 1 }}>
+          <h3 style={{
             fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-            fontSize: '10px',
-            letterSpacing: '0.06em',
+            fontWeight: 400,
+            fontSize: '15px',
+            color: COLORS.textPrimary,
+            margin: '0 0 6px',
+            lineHeight: 1.4,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}>
+            {article.title}
+          </h3>
+          <p style={{
+            fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            fontWeight: 300,
+            fontSize: '12px',
             color: COLORS.textSecondary,
-            border: `1px solid ${COLORS.border}`,
-            padding: '3px 10px',
+            margin: 0,
+            lineHeight: 1.6,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
           }}>
-            {article.tag}
-          </span>
-          <span style={{
-            fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-            fontSize: '10px',
-            color: COLORS.textMuted,
-            letterSpacing: '0.04em',
-          }}>
-            {article.readTime}
-          </span>
+            {article.subtitle}
+          </p>
         </div>
-        <h3 style={{
-          fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-          fontWeight: 300,
-          fontSize: '20px',
-          color: hovered ? COLORS.accent : COLORS.textPrimary,
-          margin: '0 0 8px',
-          transition: 'color 0.3s ease',
-          letterSpacing: '-0.01em',
-          lineHeight: 1.35,
-        }}>
-          {article.title}
-        </h3>
-        <p style={{
-          fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-          fontWeight: 300,
-          fontSize: '13px',
+        <button style={{
+          flexShrink: 0,
+          background: 'transparent',
+          border: `1px solid ${COLORS.border}`,
           color: COLORS.textSecondary,
-          margin: 0,
-          lineHeight: 1.7,
-          maxWidth: '600px',
+          fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          fontSize: '11px',
+          letterSpacing: '0.06em',
+          padding: '6px 14px',
+          cursor: 'pointer',
+          transition: 'border-color 0.2s, color 0.2s',
+          borderColor: hovered ? COLORS.accent : COLORS.border,
+          color: hovered ? COLORS.accent : COLORS.textSecondary,
         }}>
-          {article.subtitle}
-        </p>
+          Read
+        </button>
       </div>
-
-      {/* Arrow */}
-      <span style={{
-        fontSize: '16px',
-        color: hovered ? COLORS.accent : COLORS.textMuted,
-        transition: 'color 0.3s ease, transform 0.3s ease',
-        transform: hovered ? 'translate(3px, -3px)' : 'translate(0,0)',
-        display: 'inline-block',
-        alignSelf: 'center',
-      }}>↗</span>
     </div>
   );
 }
@@ -2142,70 +2161,51 @@ function FooterLink({ label }) {
 
 // ─── SPLASH SCREEN ───────────────────────────────────────────────────────────
 
-const SPLASH_LABELS = [
-  'Observing…',
-  'Questioning…',
-  'Synthesising…',
-  'Reframing…',
-  'Designing…',
-  'Done.',
+const GREETINGS = [
+  { word: 'Hello',       lang: 'English'  },
+  { word: 'नमस्ते',      lang: 'Hindi'    },
+  { word: 'ನಮಸ್ಕಾರ',    lang: 'Kannada'  },
+  { word: 'வணக்கம்',    lang: 'Tamil'    },
+  { word: 'নমস্কার',     lang: 'Bengali'  },
+  { word: 'سلام',        lang: 'Arabic'   },
+  { word: 'Hallo',       lang: 'German'   },
+  { word: 'Bonjour',     lang: 'French'   },
 ];
 
+const HOLD = 220;   // ms each greeting is fully visible
+const XFADE = 120;  // ms fade transition
+
 function SplashScreen({ onDone }) {
-  const [progress, setProgress] = useState(0);
-  const [barTransition, setBarTransition] = useState('none');
-  const [labelIndex, setLabelIndex] = useState(0);
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
+    let current = 0;
     const timers = [];
 
-    // "Loading wonder…" shows immediately (labelIndex starts at 0)
+    const showNext = () => {
+      // Fade out current
+      setVisible(false);
+      timers.push(setTimeout(() => {
+        current += 1;
+        if (current < GREETINGS.length) {
+          setIndex(current);
+          setVisible(true);
+          timers.push(setTimeout(showNext, HOLD));
+        } else {
+          // All done — fade out whole screen
+          setFading(true);
+          setTimeout(onDone, 600);
+        }
+      }, XFADE));
+    };
 
-    // Stage 1 — Crawl: 0% → 50% over 2800ms ease-out
-    timers.push(setTimeout(() => {
-      setBarTransition('width 2800ms ease-out');
-      setProgress(50);
-    }, 50));
-
-    // Label 1 — "Questioning…"
-    timers.push(setTimeout(() => setLabelIndex(1), 1120));
-
-    // Label 2 — "Synthesising…"
-    timers.push(setTimeout(() => setLabelIndex(2), 2240));
-
-    // Stage 2 — Pick up: 50% → 80% over 1200ms ease-in-out
-    timers.push(setTimeout(() => {
-      setBarTransition('width 1200ms ease-in-out');
-      setProgress(80);
-    }, 2860));
-
-    // Label 3 — "Reframing…" midway through stage 2
-    timers.push(setTimeout(() => setLabelIndex(3), 3460));
-
-    // Stage 3 — Pause: hold at 80% for 900ms
-    timers.push(setTimeout(() => {
-      setBarTransition('none');
-      setLabelIndex(4); // "Designing…"
-    }, 4060));
-
-    // Stage 4 — Sprint: 80% → 100% over 600ms ease-in
-    timers.push(setTimeout(() => {
-      setBarTransition('width 600ms ease-in');
-      setProgress(100);
-    }, 4960));
-
-    // Label 5 — "Done." when sprint fires
-    timers.push(setTimeout(() => setLabelIndex(5), 4960));
-
-    // Fade out 300ms after hitting 100%
-    timers.push(setTimeout(() => {
-      setFading(true);
-      setTimeout(onDone, 600);
-    }, 5860));
-
+    timers.push(setTimeout(showNext, HOLD));
     return () => timers.forEach(clearTimeout);
   }, [onDone]);
+
+  const { word, lang } = GREETINGS[index];
 
   return (
     <div style={{
@@ -2221,35 +2221,22 @@ function SplashScreen({ onDone }) {
       transition: 'opacity 0.6s ease',
       pointerEvents: fading ? 'none' : 'all',
     }}>
-      {/* Progress bar */}
+      {/* Greeting word */}
       <div style={{
-        width: '560px',
-        height: '2px',
-        background: 'rgba(255,255,255,0.15)',
-        position: 'relative',
-        overflow: 'hidden',
+        opacity: visible ? 1 : 0,
+        transition: `opacity ${XFADE}ms ease`,
+        textAlign: 'center',
       }}>
         <div style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          height: '100%',
-          width: `${progress}%`,
-          background: '#fff',
-          transition: barTransition,
-        }} />
-      </div>
-
-      {/* Label */}
-      <div style={{
-        fontFamily: "'Neue Helvetica World', 'Helvetica Neue', Helvetica, Arial, sans-serif",
-        fontSize: '11px',
-        letterSpacing: '0.1em',
-        color: 'rgba(255,255,255,0.7)',
-        textTransform: 'uppercase',
-        marginTop: '28px',
-      }}>
-        {SPLASH_LABELS[labelIndex]}
+          fontFamily: "'Apple Garamond', Georgia, serif",
+          fontWeight: 400,
+          fontSize: 'clamp(31px, 6vw, 67px)',
+          color: '#fff',
+          letterSpacing: '-0.02em',
+          lineHeight: 1,
+        }}>
+          {word}
+        </div>
       </div>
     </div>
   );

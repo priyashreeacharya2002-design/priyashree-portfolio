@@ -4,6 +4,7 @@ import CarbonCountPage from './CarbonCountPage';
 import ParadyesPage from './ParadyesPage';
 import BunavPage from './BunavPage';
 import EmberPage from './EmberPage';
+import AnvayaPage from './AnvayaPage';
 import * as THREE from 'three';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -2405,6 +2406,7 @@ export default function App() {
         <Route path="/work/paradyes" element={<ParadyesPage />} />
         <Route path="/work/bunav" element={<BunavPage />} />
         <Route path="/work/ember" element={<EmberPage />} />
+        <Route path="/work/anvaya" element={<AnvayaPage />} />
       </Routes>
     </BrowserRouter>
   );

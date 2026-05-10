@@ -5,6 +5,7 @@ import ParadyesPage from './ParadyesPage';
 import BunavPage from './BunavPage';
 import EmberPage from './EmberPage';
 import AnvayaPage from './AnvayaPage';
+import FerrariPage from './FerrariPage';
 import * as THREE from 'three';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -2407,6 +2408,7 @@ export default function App() {
         <Route path="/work/bunav" element={<BunavPage />} />
         <Route path="/work/ember" element={<EmberPage />} />
         <Route path="/work/anvaya" element={<AnvayaPage />} />
+        <Route path="/work/ferrari-ar" element={<FerrariPage />} />
       </Routes>
     </BrowserRouter>
   );
